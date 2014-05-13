@@ -1,9 +1,12 @@
 package edu.cmu.lti.weizh.models;
 
-import edu.cmu.lti.weizh.models.Global.ENTITY_TYPE;
 
 public class NamedEntity extends Phrase{
 
-  ENTITY_TYPE e;
-  
+  int entityid;
+  public NamedEntity(String type, int start, int end){
+    this.start=start;
+    this.end = end;
+    this.entityid = Global.E2IDMap.get(type);
+  }
 }

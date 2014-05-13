@@ -10,4 +10,13 @@ public class Phrase {
   public int getEnd(){
     return end;
   }
+  
+  public int setStart(int s){
+    this.start=s;
+    return start;
+  }
+  public int getEnd(int e){
+    this.end=e;
+    return end;
+  }
 }
