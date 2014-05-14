@@ -12,68 +12,47 @@ import edu.cmu.lti.weizh.models.Sentence;
 
 public class FDA_Trainer implements Trainer {
 
-  class featureType {
+	
+	public MLModel train(DataSet data) throws Exception {
 
-    int PPOS = 1;
+		if (!(data instanceof FDA_DataSet))
+			throw new Exception("Training data for FDA-Trainer is not type FDA_dataset.");
 
-    int PCAP = 2;
+		FDA_DataSet fdadata = (FDA_DataSet) data;
 
-    int PTOK = 3;
+		FDA_MLModel fdamodel = new FDA_MLModel();
+		/*
+		 * populate the dataset into the model.
+		 */
+		for (Document doc : fdadata.getDocuments()) {
+			for (Paragraph para : doc.getParagraphs()) {
+				for (Sentence sent : para.getSentences()) {
 
-    int NPOS = 4;
+					/*
+					 * get the named entities.
+					 */
+					List<NamedEntity> nes = sent.getNamedEntities();
 
-    int NCAP = 5;
+					for (NamedEntity ne : nes) {
+						int start = ne.getStart();
+						int end = ne.getEnd();
+						// entity starts the sentence
+						String ptok = "[0PTOK]", pcap = "[0PCAP]", ppos = "[0PPOS]";
+						String ntok = "[0NTOK]", ncap = "[0NCAP]", npos = "[0NPOS]";
+						String ctok = "[0CTOK]", ccap = "[0CCAP]", cpos = "[0CPOS]";
 
-    int NTOK = 6;
+						if (start != 0) {
+							ptok = sent.wordAt(start - 1).getLemma();
+						}
+						if (end == sent.size() - 1) {
+						}
 
-    int CPOS = 7;
+					}
 
-    int CCAP = 8;
-
-    int CTOK = 9;
-
-  }
-
-  public MLModel train(DataSet data) throws Exception {
-
-    if (!(data instanceof FDA_DataSet))
-      throw new Exception("Training data for FDA-Trainer is not type FDA_dataset.");
-
-    FDA_DataSet fdadata = (FDA_DataSet) data;
-
-    FDA_MLModel fdamodel = new FDA_MLModel();
-    /*
-     * populate the dataset into the model.
-     */
-    for (Document doc : fdadata.getDocuments()) {
-      for (Paragraph para : doc.getParagraphs()) {
-        for (Sentence sent : para.getSentences()) {
-
-          /*
-           * get the named entities.
-           */
-          List<NamedEntity> nes = sent.getNamedEntities();
-
-          for (NamedEntity ne : nes) {
-            int start = ne.getStart();
-            int end = ne.getEnd();
-            // entity starts the sentence
-            String ptok = "[0PTOK]", pcap = "[0PCAP]", ppos = "[0PPOS]";
-            String ntok = "[0NTOK]", ncap = "[0NCAP]", npos = "[0NPOS]";
-            String ctok = "[0CTOK]", ccap = "[0CCAP]", cpos = "[0CPOS]";
-
-            if (start != 0) {
-              ptok = sent.wordAt(start-1).getLemma();
-            }
-            if (end == sent.size() - 1) {
-            }
-
-          }
-
-        }
-      }
-    }
-    return fdamodel;
-  }
+				}
+			}
+		}
+		return fdamodel;
+	}
 
 }

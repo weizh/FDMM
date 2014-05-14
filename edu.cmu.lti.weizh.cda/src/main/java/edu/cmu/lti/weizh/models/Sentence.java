@@ -16,7 +16,7 @@ public class Sentence {
   List<NamedEntity> entities;
 
   public boolean isEmpty(){
-    if (words==null && plainSentence==null && parse==null)
+    if ((words==null|| words.size()==0) || plainSentence==null )
       return true;
     else return false;
   }
@@ -24,11 +24,11 @@ public class Sentence {
     this.plainSentence = plainSentence;
   }
 
-  public List<NamedEntity> getNamedEntities() throws Exception {
+  public List<NamedEntity> getNamedEntities() {
     if ( entities==null){
-      throw new Exception("Entities is null. Should be empty.");
+      System.err.println("Entity is null. Should be empty.");
     }
-    return null;
+    return this.entities;
   }
 
   public int size() throws Exception {
@@ -57,5 +57,9 @@ public class Sentence {
     this.words=words2;
     
   }
+public  List<Word> getWords() {
+	// TODO Auto-generated method stub
+	return this.words;
+}
   
 }

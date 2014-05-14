@@ -66,7 +66,6 @@ public class OntoNotesFormatReader {
       if (line.startsWith("Leaves:")) {
 
         this.NEs = new ArrayList<NamedEntity>();
-        this.words = new ArrayList<Word>();
         br.readLine();
         while ((line = br.readLine()) != null) {
           if (line.trim().length() == 0)
@@ -91,11 +90,21 @@ public class OntoNotesFormatReader {
         this.sentence.setNEs(this.NEs);
         break;
       } // eif leave
+      
+      
     } // eow outer while
     if (sentence.isEmpty())
       return null;
-    else
+    else{
+    	for (Word w : sentence.getWords()){
+    		System.out.println(w);
+    	}
+    	for (NamedEntity e : sentence.getNamedEntities()){
+    		System.out.println(e);
+    	}
       return sentence;
+    }
+    
   }
 
 }

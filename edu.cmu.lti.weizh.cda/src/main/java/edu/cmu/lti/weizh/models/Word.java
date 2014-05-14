@@ -19,4 +19,17 @@ public class Word {
   public String getLemma() {
     return word.toLowerCase();
   }
+  
+  public String getPos() {
+	return pos;
+}
+
+public void setPos(String pos) {
+	this.pos = pos;
+}
+
+public String toString(){
+	return word;
+	  
+  }
 }

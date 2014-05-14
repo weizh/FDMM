@@ -9,4 +9,8 @@ public class NamedEntity extends Phrase{
     this.end = end;
     this.entityid = Global.E2IDMap.get(type);
   }
+  
+  public String toString(){
+	  return "id:"+entityid +"start:"+start+" end:"+end;
+  }
 }
