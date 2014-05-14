@@ -77,7 +77,7 @@ public class OntoNotesFormatReader {
               String[] toks = line.trim().split("[ ]+");
               String[] pos = toks[2].split("-");
               NamedEntity ne = new NamedEntity(toks[1], Integer.parseInt(pos[0]),
-                      Integer.parseInt(pos[1]));
+                      Integer.parseInt(pos[1]),this.sentence);
               this.NEs.add(ne);
             } else
               // it's proposition.
