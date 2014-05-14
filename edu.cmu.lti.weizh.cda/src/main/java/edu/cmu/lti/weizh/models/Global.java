@@ -4,8 +4,8 @@ import gnu.trove.map.TObjectIntMap;
 
 public class Global {
 
-  public static String[] etypes = { "PERSON", "NORP", "FACILITY", "ORGANIZATION", "LOCATION",
-      "PRODUCT", "EVENT", "WORKOFART", "LAW", "LANGUAGE", "DATE", "TIME", "PERCENT", "MONEY",
+  public static String[] etypes = { "PERSON", "NORP", "FAC", "ORG", "LOC",
+      "PRODUCT", "EVENT", "WORK_OF_ART", "LAW", "LANGUAGE", "DATE", "TIME", "PERCENT", "MONEY",
       "QUANTITY", "ORDINAL", "CARDINAL" };
 
   public static TObjectIntMap<String> E2IDMap;
