@@ -34,28 +34,32 @@ public class OntoNotesFormatReader {
   public Sentence readNextSentence() throws IOException {
 
     while ((line = br.readLine()) != null) {
+      System.out.println(line);
       if (line.startsWith("-----------------------------------------------------------------"))
         continue;
-      if (line.trim().length() == 0)
+      else if (line.trim().length() == 0)
         continue;
-      if (line.startsWith("Plain sentence:")) {
+      else if (line.startsWith("Plain sentence:")) {
         br.readLine();
         this.sentence = new Sentence(br.readLine());
+        System.out.println(this.sentence.getPlainSentence());
       }
-      if (line.startsWith("Treebanked sentence:")) {
+      else if (line.startsWith("Treebanked sentence:")) {
         br.readLine();
         this.PTBSentence = br.readLine();
       }
-      if (line.startsWith("Tree")) {
+      else if (line.startsWith("Tree")) {
         br.readLine();
         StringBuilder tree = new StringBuilder();
         this.words = new ArrayList<Word>();
         while ((line = br.readLine()) != null) {
           if (line.trim().length() == 0)
             break;
-          String[] toks = line.split("(");
-          String meat = toks[toks.length-1].split(")")[0];
-          String[] sp = meat.split(" ");
+//          System.out.println(line);
+          String[] toks = line.split("[(]");
+//          System.out.println(toks[toks.length-1]);
+          String meat = toks[toks.length-1].split("[)]")[0];
+          String[] sp = meat.split("[ ]");
           words.add(new Word(sp[0],sp[1]));
           tree.append(line).append("\n");
         }
@@ -63,7 +67,7 @@ public class OntoNotesFormatReader {
         this.sentence.setTree(Utils.parseTreeString(tree.toString()));
       }
 
-      if (line.startsWith("Leaves:")) {
+      else if (line.startsWith("Leaves:")) {
 
         this.NEs = new ArrayList<NamedEntity>();
         br.readLine();
@@ -90,18 +94,21 @@ public class OntoNotesFormatReader {
         this.sentence.setNEs(this.NEs);
         break;
       } // eif leave
-      
-      
+      else if (line.startsWith("Speaker information")){
+        while(br.readLine().length()!=0);
+      }
+      else if (line.startsWith("========================================================="))
+        break;
     } // eow outer while
     if (sentence.isEmpty())
       return null;
     else{
-    	for (Word w : sentence.getWords()){
-    		System.out.println(w);
-    	}
-    	for (NamedEntity e : sentence.getNamedEntities()){
-    		System.out.println(e);
-    	}
+//    	for (Word w : sentence.getWords()){
+//    		System.out.println(w);
+//    	}
+//    	for (NamedEntity e : sentence.getNamedEntities()){
+//    		System.out.println(e);
+//    	}
       return sentence;
     }
     

@@ -1,20 +1,28 @@
 package edu.cmu.lti.weizh.fda;
 
+import java.io.File;
 import java.util.List;
 
 import edu.cmu.lti.weizh.Interface.Trainer;
 import edu.cmu.lti.weizh.models.DataSet;
 import edu.cmu.lti.weizh.models.Document;
 import edu.cmu.lti.weizh.models.Global;
-import edu.cmu.lti.weizh.models.MLModel;
 import edu.cmu.lti.weizh.models.NamedEntity;
 import edu.cmu.lti.weizh.models.Paragraph;
 import edu.cmu.lti.weizh.models.Sentence;
 
-public class FDA_Trainer implements Trainer {
+public class FDA_Trainer implements Trainer<FDA_MLModel> {
 
 	
-	public MLModel train(DataSet data) throws Exception {
+  public static void main(String argv[]) throws Exception{
+    FDA_DataSet fdad = new FDA_DataSet();
+    String path = "/Users/indri/Documents/research/LDC/enonf";
+    FDA_DataSetCreater.filterTags(new File(path), fdad);
+    FDA_MLModel model = new FDA_Trainer().train(fdad);
+    model.store("en.FDA_MLModel");
+    
+  }
+	public FDA_MLModel train(DataSet data) throws Exception {
 
 		if (!(data instanceof FDA_DataSet))
 			throw new Exception("Training data for FDA-Trainer is not type FDA_dataset.");
@@ -56,8 +64,7 @@ public class FDA_Trainer implements Trainer {
 //							npos = sent.wordAt(end+1).getPos();
 						}
 						fdamodel.add(ctok,ne.getEntityType(),Global.F_PTOK,ptok);
-						fdamodel.add(ctok,ne.getEntityType(),Global.F_NTOK,ntok);
-						
+						fdamodel.add(ctok,ne.getEntityType(),Global.F_NTOK,ntok);		
 					}
 
 				}

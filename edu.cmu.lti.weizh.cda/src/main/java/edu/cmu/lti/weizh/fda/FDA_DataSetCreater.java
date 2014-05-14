@@ -32,7 +32,7 @@ public class FDA_DataSetCreater {
 			}
 		} else {
 			if (node.isFile() && node.getAbsolutePath().endsWith(".onf")) {
-				OntoNotesFormatReader onfr = new OntoNotesFormatReader(new FileReader(new File(node.getName())));
+				OntoNotesFormatReader onfr = new OntoNotesFormatReader(new FileReader(node.getAbsoluteFile()));
 				Document d = new Document();
 				Paragraph para = new Paragraph();
 				Sentence s = null;

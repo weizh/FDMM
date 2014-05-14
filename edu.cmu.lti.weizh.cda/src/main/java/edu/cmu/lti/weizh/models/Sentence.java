@@ -10,7 +10,15 @@ public class Sentence {
 	 */
 	List<Word> words;
 	String plainSentence;
-	Tree parse;
+	public String getPlainSentence() {
+    return plainSentence;
+  }
+
+  public void setPlainSentence(String plainSentence) {
+    this.plainSentence = plainSentence;
+  }
+
+  Tree parse;
 	/*
 	 * entities are only positions.
 	 */
