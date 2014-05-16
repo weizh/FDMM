@@ -15,7 +15,8 @@ public class Global {
 			P_SYM = "SYM", P_TO = "TO", P_UH = "UH", P_VB = "VB", P_VBD = "VBD", P_VBG = "VBG", P_VBN = "VBN", P_VBP = "VBP",
 			P_VBZ = "VBZ", P_WDT = "WDT", P_WP = "WP", P_WP$ = "WP$", P_WRB = "WRB";
 
-	public static String F_PTOK = "PTOK", F_NTOK = "NTOK";
+	public static String F_PTOK = "PTOK", F_NTOK = "NTOK", F_PPTOK = "PPTOK", F_NNTOK = "NNTOK", F_PPOS = "PPOS", F_NPOS="NPOS",
+			F_NNPOS="NNPOS",F_PPPOS="PPPOS"; 
 
 	public static TObjectIntMap<String> E2IDMap;
 	public static TObjectIntMap<String> POS2IDMap;

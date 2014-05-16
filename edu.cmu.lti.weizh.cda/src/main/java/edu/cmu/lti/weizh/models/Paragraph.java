@@ -6,7 +6,6 @@ import java.util.List;
 public class Paragraph {
 
   List<Sentence> sentences;
-
   public Paragraph(){
 	  this.sentences=new ArrayList<Sentence>();
   }

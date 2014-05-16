@@ -26,16 +26,25 @@ public class Phrase {
 
 	public String getLemma() {
 		if (start == end)
-			return sent.getWords().get(start).toString();
+			return sent.getWords().get(start).getLemma().toString();
 		else if (start == end - 1)
-			return sent.getWords().get(start).toString() + sent.getWords().get(end);
+			return sent.getWords().get(start).getLemma()+ sent.getWords().get(end).getLemma();
 		else if (start == end - 2)
-			return sent.getWords().get(start).toString() + sent.getWords().get(start + 1) + sent.getWords().get(end);
+			return sent.getWords().get(start).getLemma() + sent.getWords().get(start + 1).getLemma()
+					+ sent.getWords().get(end).getLemma();
 		else {
-			StringBuilder sb = new StringBuilder(sent.getWords().get(start).toString());
+			StringBuilder sb = new StringBuilder(sent.getWords().get(start).getLemma());
 			for (int i = start + 1; i <= end; i++)
-				sb.append(" ").append(sent.getWords().get(i));
+				sb.append(" ").append(sent.getWords().get(i).getLemma());
 			return sb.toString();
 		}
+	}
+
+	public String getPOS() {
+		StringBuilder pos = new StringBuilder();
+		for (int s = start; s<=end; s++)
+			pos.append(sent.getWords().get(s).getPos());
+		
+		return pos.toString();
 	}
 }
