@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import edu.cmu.lti.weizh.Interface.MLModel;
 import gnu.trove.iterator.TIntIntIterator;
 import gnu.trove.iterator.TIntObjectIterator;
+import gnu.trove.iterator.TObjectIntIterator;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
@@ -23,11 +24,11 @@ public class FDA_MLModel extends MLModel implements Serializable {
 	 * Store dictionary. String to Id (int) map. Dic also includes Feature
 	 * values for each token. and phi type id. entity type id.
 	 */
-	TObjectIntHashMap<String> dID, pID, eID;
+	TObjectIntHashMap<String> DID, FID, LID;
 
-	int did, pid, eid;
-	public final static String DUMMY = "[ROW_TOTAL]";
-	TIntObjectHashMap<String> ID2ELabel;
+	int did, fid, lid;
+	public final static String TOTAL = "[ROW_TOTAL]";
+	TIntObjectHashMap<String> LID2LString;
 	/*
 	 * Store the Distribution of each entity over labels. <EntityID <LabelID,
 	 * FREQ>>
@@ -43,105 +44,107 @@ public class FDA_MLModel extends MLModel implements Serializable {
 	TIntObjectHashMap<TIntObjectHashMap<TIntIntHashMap>> phis;
 
 	FDA_MLModel() {
-		this.dID = new TObjectIntHashMap<String>();
-		dID.put(DUMMY, did++);// dummy variable for storing the sum.
-		this.pID = new TObjectIntHashMap<String>();
-		this.eID = new TObjectIntHashMap<String>();
-		this.ID2ELabel = new TIntObjectHashMap<String>();
-		did = pid = eid = 0;
+		this.DID = new TObjectIntHashMap<String>();
+		did = fid = lid = 0;
+		DID.put(TOTAL, did++);// dummy variable for storing the sum.
+		this.FID = new TObjectIntHashMap<String>();
+		this.LID = new TObjectIntHashMap<String>();
+		this.LID2LString = new TIntObjectHashMap<String>();
 		this.theta = new TIntObjectHashMap<TIntIntHashMap>();
 		this.phis = new TIntObjectHashMap<TIntObjectHashMap<TIntIntHashMap>>();
 	}
 
-	public void print(){
-		System.out.println("dID");
-		System.out.println(dID);
-		System.out.println("EID");
-		System.out.println(eID);
-		System.out.println("PID");
-		System.out.println(pID);
+	public void print() {
+		System.out.println("DID");
+		System.out.println(DID);
+		System.out.println("LID");
+		System.out.println(LID);
+		System.out.println("FID");
+		System.out.println(FID);
 		System.out.println("THETA");
-		System.out.println(theta.toString());
+		System.out.println(theta);
 		System.out.println("PHI");
 		System.out.println(phis);
 	}
+
 	public void add(String ctok, String entityType, String f_PTOK, String ptok) {
 
-		if (!eID.containsKey(entityType)) {
-			eID.put(entityType, eid);
-			ID2ELabel.put(eid++, entityType);
+		if (!DID.containsKey(ctok))
+			DID.put(ctok, did++);
+
+		if (!LID.containsKey(entityType)) {
+			LID.put(entityType, lid);
+			LID2LString.put(lid++, entityType);
 		}
-		if (!dID.contains(ctok))
-			dID.put(ctok, did++);
 
-		if (!pID.contains(f_PTOK))
-			pID.put(f_PTOK, pid++);
+		if (!FID.containsKey(f_PTOK))
+			FID.put(f_PTOK, fid++);
 
-		if (!dID.contains(ptok))
-			dID.put(ptok, did++);
+		if (!DID.containsKey(ptok))
+			DID.put(ptok, did++);
 
-		int d = dID.get(ctok);
-		int e = eID.get(entityType);
-		int p = dID.get(ptok);
-		int pid = pID.get(f_PTOK);
+		int c = DID.get(ctok);
+		int etype = LID.get(entityType);
+		int fheader = FID.get(f_PTOK);
+		int fval = DID.get(ptok);
 
-		int dummy = dID.get(DUMMY);
+		int tot = DID.get(TOTAL);
 
 		// fill out theta
-		if (theta.containsKey(d)) {
-			TIntIntHashMap dDistribution = theta.get(d);
+		if (theta.containsKey(c)) {
+			TIntIntHashMap dDistribution = theta.get(c);
 
 			// increment total number.
-			dDistribution.increment(dummy);
+			dDistribution.increment(tot);
 
-			if (dDistribution.containsKey(e))
-				dDistribution.increment(e);
-			else
-				dDistribution.put(e, 1);
+			if (dDistribution.containsKey(etype))
+				dDistribution.increment(etype);
+			else {
+				dDistribution.put(etype, 1);
+			}
 		} else {
 			TIntIntHashMap dDistribution = new TIntIntHashMap();
-			dDistribution.put(e, 1);
-			dDistribution.put(dummy, 1);
-			theta.put(d, dDistribution);
+			dDistribution.put(etype, 1);
+			dDistribution.put(tot, 1);
+			theta.put(c, dDistribution);
 		}
-		;
 
 		// fill out the feature
-		if (phis.contains(pid)) {
-			TIntObjectHashMap<TIntIntHashMap> phi_i = phis.get(pid);
-			if (phi_i.contains(e)) {
-				TIntIntHashMap wordDist = phi_i.get(e);
+		if (phis.containsKey(fheader)) {
+			TIntObjectHashMap<TIntIntHashMap> phi_i = phis.get(fheader);
 
-				wordDist.increment(dummy);
+			if (phi_i.containsKey(etype)) {
+				TIntIntHashMap wordDist = phi_i.get(etype);
 
-				if (wordDist.contains(p))
-					wordDist.increment(p);
+				wordDist.increment(tot);
+
+				if (wordDist.containsKey(fval))
+					wordDist.increment(fval);
 				else
-					wordDist.put(p, 1);
+					wordDist.put(fval, 1);
 
 			} else {
 				TIntIntHashMap wordDist = new TIntIntHashMap();
-				wordDist.put(dummy, 1);
-				wordDist.put(p, 1);
-				phi_i.put(e, wordDist);
+				wordDist.put(tot, 1);
+				wordDist.put(fval, 1);
+				phi_i.put(etype, wordDist);
 			}
 		} else {
 			TIntIntHashMap wordDist = new TIntIntHashMap();
-			wordDist.put(dummy, 1);
-			wordDist.put(p, 1);
+			wordDist.put(tot, 1);
+			wordDist.put(fval, 1);
 			TIntObjectHashMap<TIntIntHashMap> phi_i = new TIntObjectHashMap<TIntIntHashMap>();
-			phi_i.put(e, wordDist);
-			phis.put(pid, phi_i);
+			phi_i.put(etype, wordDist);
+			phis.put(fheader, phi_i);
 		}
 	}
 
 	public static void main(String args[]) throws IOException, ClassNotFoundException {
 		FDA_MLModel model = FDA_MLModel.load("en.FDA_MLModel");
-		
+
 		System.out.println();
 
 	}
-
 
 	public static FDA_MLModel load(String file) throws IOException, ClassNotFoundException {
 		FileInputStream in = new FileInputStream(file);
@@ -160,36 +163,77 @@ public class FDA_MLModel extends MLModel implements Serializable {
 		out.close();
 	}
 
-	public String predict(String ctok, double alpha, double beta, String... args) throws Exception {
-		if ((args.length & 0x01) !=0)
+	public String predict(String[] thetaIndex, double alpha, double beta, String... args) throws Exception {
+		if ((args.length & 0x01) != 0)
 			throw new Exception(" Number of arguments for features should not be odd.");
 
-		TIntIntHashMap entitytheta = theta.get(dID.get(ctok));
+		// if (DID.containsKey(ctok))
+		TIntIntHashMap entitytheta = theta.get(DID.get(thetaIndex[0]));
+		if (entitytheta == null) {
+
+			entitytheta = theta.get(DID.get(thetaIndex[1]));
+			// return null;
+		}
+
 		int tsize = entitytheta.size() - 1;
+
 		TIntIntIterator ei = entitytheta.iterator();
 		int maxlabel = -1;
 		double maxval = -1;
 
 		while (ei.hasNext()) {
-			 ei.advance();
+			ei.advance();
 			int label = ei.key();
+			if (label == entitytheta.get(DID.get(TOTAL)))
+				continue;
 			int tnum = ei.value();
-			int tdenom = entitytheta.get(dID.get(DUMMY));
+			int tdenom = entitytheta.get(DID.get(TOTAL));
 
 			double tempval = ((tnum + alpha) / (tdenom + tsize * alpha));
-			for ( int i = 0 ; i < args.length; i+=2){
-				TIntIntHashMap tempphi = phis.get(pID.get(args[i])).get(label);
-				int num = tempphi.get(dID.get(args[i+1]));
-				int denom = tempphi.get(dID.get(DUMMY));
-				tempval *= (num+beta)/(denom+beta*(tempphi.size()-1));					
+			for (int i = 0; i < args.length; i += 2) {
+				TIntIntHashMap tempphi = phis.get(FID.get(args[i])).get(label);
+				int num = tempphi.get(DID.get(args[i + 1]));
+				int denom = tempphi.get(DID.get(TOTAL));
+				tempval *= (num + beta) / (denom + beta * (tempphi.size() - 1));
 			}
 
-			if (tempval>maxval){
+			if (tempval > maxval) {
 				maxval = tempval;
 				maxlabel = label;
 			}
 		}
-		return ID2ELabel.get(maxlabel);
+		return LID2LString.get(maxlabel);
+	}
+
+	public void collapse() {
+
+		TIntObjectIterator<TIntObjectHashMap<TIntIntHashMap>> ti = phis.iterator();
+		while (ti.hasNext()) {
+			ti.advance();
+			TIntObjectHashMap<TIntIntHashMap> m = ti.value();
+			TIntObjectIterator<TIntIntHashMap> mi = m.iterator();
+			while (mi.hasNext()) {
+				mi.advance();
+				TIntIntHashMap map = mi.value();
+				TObjectIntIterator<String> Diter = DID.iterator();
+				while (Diter.hasNext()) {
+					Diter.advance();
+					if (Diter.key().equals(TOTAL))
+						continue;
+					String lower = Diter.key().toLowerCase();
+					if (lower.equals(Diter.key()))
+						continue;
+					else {
+						// if contains capitalized
+						if (map.containsKey(Diter.value()))
+							if (map.containsKey(DID.get(lower)))
+								map.put(DID.get(lower), map.get(DID.get(lower)) + map.get(Diter.value()));
+							else
+								map.put(DID.get(lower), map.get(Diter.value()));
+					}
+				}
+			}
+		}
 	}
 
 }

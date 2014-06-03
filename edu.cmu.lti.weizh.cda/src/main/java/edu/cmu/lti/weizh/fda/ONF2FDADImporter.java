@@ -3,10 +3,13 @@ package edu.cmu.lti.weizh.fda;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 import edu.cmu.lti.weizh.models.Document;
+import edu.cmu.lti.weizh.models.NamedEntity;
 import edu.cmu.lti.weizh.models.Paragraph;
 import edu.cmu.lti.weizh.models.Sentence;
+import edu.cmu.lti.weizh.models.Word;
 
 public class ONF2FDADImporter {
 
@@ -38,6 +41,23 @@ public class ONF2FDADImporter {
 				Sentence s = null;
 				while ((s = onfr.readNextSentence()) != null)
 					para.addSentence(s);
+				
+				/*
+				 * loop over the sentences in paragraph.
+				 */
+				for (Sentence sent : para.getSentences()){
+
+					List<Word> words = sent.getWords();
+					for (Word word : words) {
+						word.setEntityType("[O]");
+					}
+
+					for (NamedEntity ne : sent.getNamedEntities()) {
+						for (int i = ne.getStart(); i <= ne.getEnd(); i++) {
+							words.get(i).setEntityType(ne.getEntityType());
+						}
+					}
+				}
 				d.addParagraph(para);
 				fdad.getDocuments().add(d);
 			}
