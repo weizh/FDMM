@@ -1,13 +1,40 @@
 package edu.cmu.lti.weizh.models;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
 public class Global {
 
 	public static final String E_PERSON = "PERSON", E_NORP = "NORP", E_FAC = "FAC", E_ORG = "ORG", E_LOC = "LOC",
 			E_PRODUCT = "PRODUCT", E_EVENT = "EVENT", E_WORK_OF_ART = "WORK_OF_ART", E_LAW = "LAW", E_LANGUAGE = "LANGUAGE",
 			E_DATE = "DATE", E_TIME = "TIME", E_PERCENT = "PERCENT", E_MONEY = "MONEY", E_QUANTITY = "QUANTITY",
-			E_ORDINAL = "ORDINAL", E_CARDINAL = "CARDINAL";
+			E_ORDINAL = "ORDINAL", E_CARDINAL = "CARDINAL", E_GPE = "GPE";
 
+	public static String[] EntityTypes = { E_PERSON, E_NORP, E_FAC, E_ORG, E_LOC, E_PRODUCT, E_EVENT, E_WORK_OF_ART, E_LAW,
+			E_LANGUAGE, E_DATE, E_TIME, E_PERCENT, E_MONEY, E_QUANTITY, E_ORDINAL, E_CARDINAL, E_GPE };
+
+	public static HashSet<String> EntityList;
+
+	static {
+		EntityList = new HashSet<String>(Arrays.asList(EntityTypes));
+	}
+	public static final String CSUF = "[CSUF]", P1SUF = "[P1SUF]", N1SUF = "[N1SUF]", P2SUF = "[P2SUF]", N2SUF = "[N2SUF]",
+			P3SUF = "[P3SUF]", N3SUF = "[N3SUF]", P4SUF = "[P4SUF]", N4SUF = "[N4SUF]", P5SUF = "[P5SUF]", N5SUF = "[N5SUF]";
+
+	public static final String P1FORM = "[P1FORM]", P2FORM = "[P2FORM]", P3FORM = "[P3FORM]", P4FORM = "[P4FORM]",
+			P5FORM = "[P5FORM]", N1FORM = "[N1FORM]", N2FORM = "[N2FORM]", N3FORM = "[N3FORM]", N4FORM = "[N4FORM]",
+			N5FORM = "[P5FORM]", CFORM = "[CFORM]";
+
+	public static final String P1TYPE = "[P1TYPE]", P2TYPE = "[N2TYPE]", P3TYPE = "[N3TYPE]";
+
+	public static final String P2WSEQ = "[P2WSEQ]", N2WSEQ = "[N2WSEQ]", P3WSEQ = "[P3WSEQ]", N3WSEQ = "[N3WSEQ]";
+
+	public static final String CPREF = "[CPREF]", P1PREF = "[P1PREF]", P2PREF = "[P2PREF]", P3PREF = "[P3PREF]",
+			P4PREF = "[P4PREF]", P5PREF = "[P5PREF]", N1PREF = "[N1PREF]", N2PREF = "[N2PREF]", N3PREF = "[N3PREF]",
+			N4PREF = "[N4PREF]", N5PREF = "[N5PREF]";
+
+	public static final String P1END = "[P1END]",P2END = "[P2END]",P3END = "[P3END]",N1END = "[N1END]",N2END = "[N2END]",N3END = "[N3END]";
 
 	public static String P_CC = "CC", P_CD = "CD", P_DT = "DT", P_EX = "EX", P_FW = "FW", P_IN = "IN", P_JJ = "JJ",
 			P_JJR = "JJR", P_JJS = "JJS", P_LS = "LS", P_MD = "MD", P_NN = "NN", P_NNS = "NNS", P_NNP = "NNP", P_NNPS = "NNPS",

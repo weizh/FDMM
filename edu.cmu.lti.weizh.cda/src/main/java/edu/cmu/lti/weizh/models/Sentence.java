@@ -46,6 +46,10 @@ public class Sentence {
 			}
 		this.words = words;
 	}
+	public boolean[] getFolds(){
+		Word pivot = words.get(0);
+		return pivot.getBooleanFolds();
+	}
 
 	public Sentence(Tree parse) {
 		this.parse = parse;
@@ -59,9 +63,9 @@ public class Sentence {
 		return this.entities;
 	}
 
-	public int size() throws Exception {
+	public int size() {
 		if (words == null)
-			throw new Exception("Empty Sentence. Size() function not working.");
+			return 0;
 		return words.size();
 	}
 

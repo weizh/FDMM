@@ -6,6 +6,14 @@ public class Phrase {
 
 	int start, end;
 
+	public Phrase(){
+		
+	}
+	public Phrase(Sentence sent, int start, int end){
+		this.sent=sent;
+		this.start=start;
+		this.end=end;
+	}
 	public int getStart() {
 		return start;
 	}

@@ -3,6 +3,7 @@ package edu.cmu.lti.weizh.fda;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -16,8 +17,10 @@ import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
-public class FDA_MLModel extends MLModel implements Serializable {
+public class FDA_MLModel extends MLModel {
 
+	String modelname;
+	
 	private static final long serialVersionUID = 1L;
 
 	/*
@@ -45,11 +48,15 @@ public class FDA_MLModel extends MLModel implements Serializable {
 
 	FDA_MLModel() {
 		this.DID = new TObjectIntHashMap<String>();
-		did = fid = lid = 0;
-		DID.put(TOTAL, did++);// dummy variable for storing the sum.
-		this.FID = new TObjectIntHashMap<String>();
 		this.LID = new TObjectIntHashMap<String>();
 		this.LID2LString = new TIntObjectHashMap<String>();
+		did = fid = lid = 0;
+		DID.put(TOTAL, did++);// dummy variable for storing the sum.
+		LID.put(TOTAL, lid++);
+		LID2LString.put(lid, TOTAL);
+
+		this.FID = new TObjectIntHashMap<String>();
+
 		this.theta = new TIntObjectHashMap<TIntIntHashMap>();
 		this.phis = new TIntObjectHashMap<TIntObjectHashMap<TIntIntHashMap>>();
 	}
@@ -96,12 +103,8 @@ public class FDA_MLModel extends MLModel implements Serializable {
 
 			// increment total number.
 			dDistribution.increment(tot);
-
-			if (dDistribution.containsKey(etype))
-				dDistribution.increment(etype);
-			else {
-				dDistribution.put(etype, 1);
-			}
+			dDistribution.adjustOrPutValue(etype, 1, 1);
+			
 		} else {
 			TIntIntHashMap dDistribution = new TIntIntHashMap();
 			dDistribution.put(etype, 1);
@@ -115,13 +118,9 @@ public class FDA_MLModel extends MLModel implements Serializable {
 
 			if (phi_i.containsKey(etype)) {
 				TIntIntHashMap wordDist = phi_i.get(etype);
-
+				
+				wordDist.adjustOrPutValue(fval, 1, 1);
 				wordDist.increment(tot);
-
-				if (wordDist.containsKey(fval))
-					wordDist.increment(fval);
-				else
-					wordDist.put(fval, 1);
 
 			} else {
 				TIntIntHashMap wordDist = new TIntIntHashMap();
@@ -150,6 +149,7 @@ public class FDA_MLModel extends MLModel implements Serializable {
 		FileInputStream in = new FileInputStream(file);
 		ObjectInputStream ins = new ObjectInputStream(in);
 		FDA_MLModel copy = (FDA_MLModel) ins.readObject();
+		copy.modelname = file;
 		in.close();
 		ins.close();
 		return copy;
@@ -169,12 +169,13 @@ public class FDA_MLModel extends MLModel implements Serializable {
 
 		// if (DID.containsKey(ctok))
 		TIntIntHashMap entitytheta = theta.get(DID.get(thetaIndex[0]));
-		if (entitytheta == null) {
+		int et=1;
+		while (entitytheta == null) {
 
-			entitytheta = theta.get(DID.get(thetaIndex[1]));
+			entitytheta = theta.get(DID.get(thetaIndex[et++]));
 			// return null;
 		}
-
+		
 		int tsize = entitytheta.size() - 1;
 
 		TIntIntIterator ei = entitytheta.iterator();
@@ -184,8 +185,9 @@ public class FDA_MLModel extends MLModel implements Serializable {
 		while (ei.hasNext()) {
 			ei.advance();
 			int label = ei.key();
-			if (label == entitytheta.get(DID.get(TOTAL)))
+			if (label == (DID.get(TOTAL))){
 				continue;
+			}
 			int tnum = ei.value();
 			int tdenom = entitytheta.get(DID.get(TOTAL));
 
@@ -202,6 +204,7 @@ public class FDA_MLModel extends MLModel implements Serializable {
 				maxlabel = label;
 			}
 		}
+		
 		return LID2LString.get(maxlabel);
 	}
 

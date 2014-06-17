@@ -24,14 +24,15 @@ public class NamedEntity extends Phrase {
 	}
 
 	public NamedEntity(String type, int start, int end, Sentence sent) {
-		this.start = start;
-		this.end = end;
+		
+		super(sent,start,end);
+
 		this.entityType= type;
-		this.sent = sent;
+		
 	}
 	
 	public String toString() {
-		return "id:" + entityType + " start:" + start + " end:" + end;
+		return getLemma()+" " + entityType + " start:" + start + " end:" + end;
 	}
 
 	public String getCap() {
