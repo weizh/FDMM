@@ -4,6 +4,13 @@ public class Phrase {
 
 	Sentence sent;
 
+	public Sentence getSent() {
+		return sent;
+	}
+	public void setSent(Sentence sent) {
+		this.sent = sent;
+	}
+
 	int start, end;
 
 	public Phrase(){
@@ -61,6 +68,23 @@ public class Phrase {
 			for (int s = start + 1; s <= end; s++)
 				pos.append('-').append(sent.getWords().get(s).getPOS());
 			return pos.toString();
+		}
+	}
+	public String getWords() {
+		// TODO Auto-generated method stub
+		
+		if (start == end)
+			return sent.getWords().get(start).getWord().toString();
+		else if (start == end - 1)
+			return sent.getWords().get(start).getWord() + ' ' + sent.getWords().get(end).getWord();
+		else if (start == end - 2)
+			return sent.getWords().get(start).getWord() + ' ' + sent.getWords().get(start + 1).getWord() + ' '
+					+ sent.getWords().get(end).getWord();
+		else {
+			StringBuilder sb = new StringBuilder(sent.getWords().get(start).getWord());
+			for (int i = start + 1; i <= end; i++)
+				sb.append(" ").append(sent.getWords().get(i).getWord());
+			return sb.toString();
 		}
 	}
 }

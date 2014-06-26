@@ -93,10 +93,10 @@ public class EuroLangTwokenizer {
   // @ Wei Zhang
   // added question marks and exclamation mark, and long dash.
   // added ( and ) as punctuations
-  static String punctChars = "['\"“�?‘’\\|.—¿?¡!…,:;]";
+  static String punctChars = "['\"“�?‘’\\|.—¿?¡!…,:;]";
 
   // static String punctSeq = punctChars+"+"; //'anthem'. => ' anthem '.
-  static String punctSeq = "['\"“�?‘’/_]+|[.¿?¡!,…]+|[:;]+"; // 'anthem'. =>
+  static String punctSeq = "['\"“�?‘’/_]+|[.¿?¡!,…]+|[:;]+"; // 'anthem'. =>
 
   // ' anthem '
   // .
@@ -164,7 +164,7 @@ public class EuroLangTwokenizer {
 
   static String separators = "(?:--+|―|—|~|–|=)";
 
-  static String decorations = "(?:[♫♪]+|[★☆]+|[♥�?�♡]+|[\\u2639-\\u263b]+|[\\ue001-\\uebbb]+)";
+  static String decorations = "(?:[♫♪]+|[★☆]+|[♥�?�♡]+|[\\u2639-\\u263b]+|[\\ue001-\\uebbb]+)";
 
   static String thingsThatSplitWords = "[^\\s\\.,?\"\\-]";
 
@@ -227,7 +227,7 @@ public class EuroLangTwokenizer {
 
   static String eeLeft = "[＼\\\\ƪԄ\\(（<>;ヽ\\-=~\\*]+";
 
-  static String eeRight = "[\\-=\\);'\\u0022<>ʃ）/�?ノﾉ丿╯σ�?�µ~\\*]+";
+  static String eeRight = "[\\-=\\);'\\u0022<>ʃ）/�?ノﾉ丿╯σ�?�µ~\\*]+";
 
   static String eeSymbol = "[^A-Za-z0-9\\s\\(\\)\\*:=-]";
 
@@ -311,7 +311,7 @@ public class EuroLangTwokenizer {
   // to revisit or eliminate.
 
   // Note the 'smart quotes' (http://en.wikipedia.org/wiki/Smart_quotes)
-  static String edgePunctChars = "'\"“�?‘’«»{}\\(\\)\\[\\]\\*&"; // add
+  static String edgePunctChars = "'\"“�?‘’«»{}\\(\\)\\[\\]\\*&"; // add
 
   // \\p{So}?
   // (symbols)
@@ -481,7 +481,7 @@ public class EuroLangTwokenizer {
   }
 
   public static void main(String[] args) throws IOException {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in, "utf-8"));
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     System.out.print("> ");
     // Read user input
     String inputStr = br.readLine();

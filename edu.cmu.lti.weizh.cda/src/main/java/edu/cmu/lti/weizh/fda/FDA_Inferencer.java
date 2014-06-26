@@ -12,6 +12,7 @@ import edu.cmu.lti.weizh.models.Global;
 import edu.cmu.lti.weizh.models.NamedEntity;
 import edu.cmu.lti.weizh.models.Sentence;
 import edu.cmu.lti.weizh.models.Word;
+import edu.cmu.lti.weizh.nlputils.BreakIterator_Java;
 import edu.cmu.lti.weizh.nlputils.EuroLangTwokenizer;
 import edu.cmu.lti.weizh.ontonotes.ONF_DataSet;
 import edu.cmu.lti.weizh.utils.BKTree;
@@ -56,13 +57,13 @@ public class FDA_Inferencer implements Inferencer<FDA_MLModel, ONF_DataSet> {
 		 */
 
 		System.err.println("Loading NER Model:");
-		int foldId = 0;
-		FDA_MLModel nerModel = FDA_MLModel.load("src/main/resources/rich-alltok-fold10." + foldId
-				+ "(p5-n5_pos-tok-cap)(ctok-cpos-cclps-ctype).en.FDA_MLModel");
+
+		FDA_MLModel nerModel = FDA_MLModel
+				.load("src/main/resources/20140618_000850-alltok-fold10.0(p5-n5_pos-tok-cap)(ctok-cpos-cclps-ctype).en.FDA_MLModel");
 		System.err.println("NER Done.");
 
 		System.err.println("Loading POS Model:");
-		foldId = 0;
+		int foldId = 0;
 		FDA_MLModel posSentModel = FDA_MLModel.load("src/main/resources/POS-alltok-fold10." + foldId
 				+ "(p5-n5_pos-tok-cap)(ctok-cpos-cclps-ctype).en.FDA_MLModel");
 		System.err.println("POS Done.");
@@ -94,7 +95,7 @@ public class FDA_Inferencer implements Inferencer<FDA_MLModel, ONF_DataSet> {
 
 	public ArrayList<NamedEntity> infer(String line) {
 
-		Sentence tokdsent = EuroLangTwokenizer.tokenize(new Sentence(line));
+		Sentence tokdsent = BreakIterator_Java.tokenize(new Sentence(line));
 		Sentence posedsent = tagSentPOS(tokdsent);
 		Sentence neredsent = tagSentNE(posedsent);
 		for (Word w : neredsent.getWords()) {
@@ -109,8 +110,8 @@ public class FDA_Inferencer implements Inferencer<FDA_MLModel, ONF_DataSet> {
 										+ " (Corrected.)"))
 										+ "\t" + w.getPOS() + "\t" + w.getEntityType());
 						if (s != null) {
-							w.setCorrected((Character.isUpperCase(w.getWord().charAt(0)) ? w.getWord().charAt(0)
-									+ s.s.substring(1) : s.s));
+							w.setCorrected((Character.isUpperCase(w.getWord().charAt(0)) ? w.getWord().charAt(0) + s.s.substring(1)
+									: s.s));
 						}
 
 						continue;
@@ -120,28 +121,59 @@ public class FDA_Inferencer implements Inferencer<FDA_MLModel, ONF_DataSet> {
 
 		ArrayList<NamedEntity> locs = new ArrayList<NamedEntity>();
 		int startpos = -1, endpos = -1;
-		String current = "[O]", previous = "[O]";
+		String hist = null;
 		for (int k = 0; k < neredsent.getWords().size(); k++) {
-			if (k > 0)
-				previous = current;
-			current = neredsent.getWords().get(k).getEntityType();
-			if (current.equals("[O]"))
-				if (previous.equals("[O]"))
-					continue;
-				else {
-					endpos = k - 1;
-					if (previous.equals("[O]"))
-						previous = "O";
-					else if (previous.equals("GPE"))
-						previous = "TP";
-					NamedEntity le = new NamedEntity(previous, startpos, endpos, neredsent);
-					locs.add(le);
+			String current = neredsent.getWords().get(k).getEntityType();
+			if (k == 0) {
+				hist = current;
+				startpos = 0;
+				endpos = 0;
+			} else if (k == neredsent.getWords().size() - 1) {
+				if (hist.equals(current)) {
+					endpos = k;
+					// create hist+current entity
+				if(!hist.equals("[O]"))	locs.add(new NamedEntity(hist, startpos, endpos, neredsent));
+				} else {
+					// create hist entity
+					if(!hist.equals("[O]")) locs.add(new NamedEntity(hist, startpos, endpos, neredsent));
+					// create current single token entity
+					if(!current.equals("[O]")) locs.add(new NamedEntity(current, k, k, neredsent));
 				}
-			else if (previous.equals("[O]"))
-				startpos = k;
-			else
-				endpos = k;
+			} else {
+				if (hist.equals(current)) {
+					endpos = k;
+				} else {
+					// create start to end entity
+					if(!hist.equals("[O]")) locs.add(new NamedEntity(hist, startpos, endpos, neredsent));
+
+					startpos = k;
+					endpos = k;
+					hist = current;
+				}
+			}
 		}
+		
+//		for (Word w : neredsent.getWords()) {
+//			String sword = w.getLemma();
+//			if (!dict.contains(sword))
+//				if (w.getEntityType().equals("LOC") || w.getEntityType().equals("FAC") || w.getEntityType().equals("GPE"))
+//					if (!bbt.inGaz(w.getWord())) {
+//						TreeNode s = bbt.findBest(w.getWord());
+//						System.out
+//								.println((s == null ? w.getWord() + " (Not Corrected.)" : (Character.isUpperCase(w.getWord()
+//										.charAt(0)) ? w.getWord().charAt(0) + s.s.substring(1) + " (Corrected.)" : s.s
+//										+ " (Corrected.)"))
+//										+ "\t" + w.getPOS() + "\t" + w.getEntityType());
+//						if (s != null) {
+//							w.setCorrected((Character.isUpperCase(w.getWord().charAt(0)) ? w.getWord().charAt(0) + s.s.substring(1)
+//									: s.s));
+//						}
+//
+//						continue;
+//					}
+//			System.out.println(w.getWord() + "\t" + w.getPOS() + "\t" + w.getEntityType());
+//		}
+		
 		return locs;
 	}
 

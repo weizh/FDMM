@@ -167,14 +167,14 @@ public class BKTree {
 
 		ArrayList<TreeNode> amatches = new ArrayList<TreeNode>();
 		for (Match<? extends TreeNode> match : matches) {
-			System.out.println(String.format("%s (distance %d), weight %f", match.getMatch().s, match.getDistance(),
-					match.getMatch().weight));
+//			System.out.println(String.format("%s (distance %d), weight %f", match.getMatch().s, match.getDistance(),
+//					match.getMatch().weight));
 			if (match.getMatch().s.charAt(0) == q.charAt(0))
 				amatches.add(match.getMatch());
 		}
 		Collections.sort(amatches);
 		if (amatches.size() != 0){
-			System.out.println("The correction is: " + amatches.get(amatches.size() - 1).s);
+//			System.out.println("The correction is: " + amatches.get(amatches.size() - 1).s);
 			return amatches.get(amatches.size() - 1);}
 		else
 			return null;

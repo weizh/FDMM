@@ -18,19 +18,22 @@ import edu.cmu.lti.weizh.utils.Stemmer;
 public class FDA_OnlineLearner {
 
 	FDA_MLModel posModel;
-
+	static String modelname, path;
 	public static void main(String argv[]) throws Exception {
-		int foldId = 0;
-		String modelname = "alltok-fold10." + foldId + "(p5-n5_pos-tok-cap)(ctok-cpos-cclps-ctype).en.FDA_MLModel";
-		FDA_MLModel nerModel = FDA_MLModel.load("rich-"+modelname);
+		 modelname = "alltok-fold10.0(p5-n5_pos-tok-cap)(ctok-cpos-cclps-ctype).en.FDA_MLModel";
+		 path = "src/main/resources/";
+		FDA_MLModel nerModel = FDA_MLModel.load(path+"rich-" + modelname);
 
 		System.err.println("This is the online learner. Input sentence, then tag it.");
 
-		FDA_MLModel posModel = FDA_MLModel.load("SENT-POSModel-" + modelname);
+		FDA_MLModel posModel = FDA_MLModel
+				.load(path+"POS-"+modelname);
+		
 		FDA_OnlineLearner onlineLearner = new FDA_OnlineLearner();
 		onlineLearner.posModel = posModel;
 
 		onlineLearner.onlineUpdate(nerModel, System.in);
+		
 	}
 
 	private void onlineUpdate(FDA_MLModel fdamodel, InputStream in) throws Exception {
@@ -46,7 +49,7 @@ public class FDA_OnlineLearner {
 				line = br.readLine();
 				if (line.equalsIgnoreCase("y")) {
 					String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-					fdamodel.store(timeStamp + "-"+fdamodel.modelname);
+					fdamodel.store( path +timeStamp + "-" + modelname);
 				}
 				break;
 			}
@@ -110,7 +113,6 @@ public class FDA_OnlineLearner {
 				System.out.println("Please tag the named entity with couple [(pos)  (tag)]. If there aren't any, just press D.");
 
 			}
-
 
 			int wordposition = 0;
 			for (Word word : words) {
@@ -204,7 +206,7 @@ public class FDA_OnlineLearner {
 				String sn3tok = Stemmer.stemTerm(n3tok);
 				String sctok = Stemmer.stemTerm(ctok);
 
-				for (String s : new String[] { Stemmer.stemTerm(ctok), cform, cpos, ccap, cform+"_"+cpos }) {
+				for (String s : new String[] { Stemmer.stemTerm(ctok), cform, cpos, ccap, cform + "_" + cpos }) {
 					fdamodel.add(s, word.getEntityType(), Global.P1TOK, sp1tok);
 					fdamodel.add(s, word.getEntityType(), Global.P2TOK, sp2tok);
 					fdamodel.add(s, word.getEntityType(), Global.P3TOK, sp3tok);
@@ -261,7 +263,7 @@ public class FDA_OnlineLearner {
 					fdamodel.add(s, word.getEntityType(), Global.P3TYPE, p3type);
 				}
 			}
-		
+
 			System.out.print(">");
 		}
 	}

@@ -32,7 +32,12 @@ public class NamedEntity extends Phrase {
 	}
 	
 	public String toString() {
-		return getLemma()+" " + entityType + " start:" + start + " end:" + end;
+		return getWords()+" " + entityType + " start:" + start + " end:" + end;
+	}
+
+	public String getWords() {
+		// TODO Auto-generated method stub
+		return super.getWords();
 	}
 
 	public String getCap() {
