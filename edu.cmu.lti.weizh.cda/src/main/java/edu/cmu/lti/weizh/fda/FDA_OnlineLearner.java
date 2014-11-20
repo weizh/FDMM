@@ -19,21 +19,21 @@ public class FDA_OnlineLearner {
 
 	FDA_MLModel posModel;
 	static String modelname, path;
+
+	public FDA_OnlineLearner(FDA_MLModel posModel2) {
+		posModel = posModel2;
+	}
+
 	public static void main(String argv[]) throws Exception {
-		 modelname = "alltok-fold10.0(p5-n5_pos-tok-cap)(ctok-cpos-cclps-ctype).en.FDA_MLModel";
-		 path = "src/main/resources/";
-		FDA_MLModel nerModel = FDA_MLModel.load(path+"rich-" + modelname);
+
+		FDA_MLModel nerModel = new FDA_MLModel();
 
 		System.err.println("This is the online learner. Input sentence, then tag it.");
 
-		FDA_MLModel posModel = FDA_MLModel
-				.load(path+"POS-"+modelname);
-		
-		FDA_OnlineLearner onlineLearner = new FDA_OnlineLearner();
-		onlineLearner.posModel = posModel;
+		FDA_OnlineLearner onlineLearner = new FDA_OnlineLearner(FDA_MLModel.load("POS-rich-randomSent-fold10.0-NOV08.en.FDA_MLModel"));
 
 		onlineLearner.onlineUpdate(nerModel, System.in);
-		
+
 	}
 
 	private void onlineUpdate(FDA_MLModel fdamodel, InputStream in) throws Exception {
@@ -49,7 +49,7 @@ public class FDA_OnlineLearner {
 				line = br.readLine();
 				if (line.equalsIgnoreCase("y")) {
 					String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-					fdamodel.store( path +timeStamp + "-" + modelname);
+					fdamodel.store(path + timeStamp + "-" + modelname);
 				}
 				break;
 			}

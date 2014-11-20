@@ -1,5 +1,7 @@
 package edu.cmu.lti.weizh.models;
 
-public class Tree {
+import java.io.Serializable;
+
+public class Tree implements Serializable {
 
 }

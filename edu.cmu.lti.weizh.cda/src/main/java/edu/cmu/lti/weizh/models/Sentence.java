@@ -1,9 +1,10 @@
 package edu.cmu.lti.weizh.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Sentence {
+public class Sentence implements Serializable{
 
 	/*
 	 * The real meats are in the word.

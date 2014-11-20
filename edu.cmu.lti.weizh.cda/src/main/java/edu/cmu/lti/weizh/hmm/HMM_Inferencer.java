@@ -31,7 +31,7 @@ public class HMM_Inferencer implements Inferencer{
 		
 		new HMM_Inferencer().infer(hmmModel, testSet, ifold);
 		
-		testSet.predictionsWordsStatSentPOS(ifold);
+		testSet.predictions_POS_TokenbyToken_Stat(ifold);
 		
 	}
 

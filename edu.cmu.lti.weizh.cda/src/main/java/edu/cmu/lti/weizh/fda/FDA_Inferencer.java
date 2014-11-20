@@ -1,6 +1,5 @@
 package edu.cmu.lti.weizh.fda;
 
-import java.awt.List;
 import java.io.BufferedReader;
 
 import java.io.InputStream;
@@ -59,13 +58,11 @@ public class FDA_Inferencer implements Inferencer<FDA_MLModel, ONF_DataSet> {
 		System.err.println("Loading NER Model:");
 
 		FDA_MLModel nerModel = FDA_MLModel
-				.load("src/main/resources/20140618_000850-alltok-fold10.0(p5-n5_pos-tok-cap)(ctok-cpos-cclps-ctype).en.FDA_MLModel");
+				.load("NER10-rich-randomSent-fold10.0-NOV08.en.FDA_MLModel");
 		System.err.println("NER Done.");
 
 		System.err.println("Loading POS Model:");
-		int foldId = 0;
-		FDA_MLModel posSentModel = FDA_MLModel.load("src/main/resources/POS-alltok-fold10." + foldId
-				+ "(p5-n5_pos-tok-cap)(ctok-cpos-cclps-ctype).en.FDA_MLModel");
+		FDA_MLModel posSentModel = FDA_MLModel.load("POS-rich-randomSent-fold10.0-NOV08.en.FDA_MLModel");
 		System.err.println("POS Done.");
 
 		System.err.println("Loading Dict :");

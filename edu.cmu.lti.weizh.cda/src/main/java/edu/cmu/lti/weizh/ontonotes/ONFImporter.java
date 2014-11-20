@@ -60,6 +60,7 @@ public class ONFImporter {
 				}
 				d.addParagraph(para);
 				fdad.getDocuments().add(d);
+				onfr.close();
 			}
 		}
 	}

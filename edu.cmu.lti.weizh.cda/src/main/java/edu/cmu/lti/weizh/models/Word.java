@@ -1,6 +1,8 @@
 package edu.cmu.lti.weizh.models;
 
-public class Word {
+import java.io.Serializable;
+
+public class Word implements Serializable{
 
 	String word;
 
