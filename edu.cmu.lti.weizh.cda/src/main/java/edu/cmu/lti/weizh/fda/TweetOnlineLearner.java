@@ -50,7 +50,9 @@ public class TweetOnlineLearner {
 		/*
 		 * To find those files, first go to src/main/resources, uncompres the train_test_data.tar.gz
 		 * in the folder.
+		 * No model files needed.
 		 */
+		
 		
 		String startFileName = "resources/seed.txt";
 		String testFile = "resources/test.txt";
