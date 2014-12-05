@@ -47,9 +47,14 @@ public class TweetOnlineLearner {
 
 	public static void main(String argv[]) throws Exception {
 
-		String startFileName = "/home/wei/Documents/activeLearning/seed.txt";
-		String testFile = "/home/wei/Documents/activeLearning/test.txt";
-		String activeTrain = "/home/wei/Documents/activeLearning/AL.txt";
+		/*
+		 * To find those files, first go to src/main/resources, uncompres the train_test_data.tar.gz
+		 * in the folder.
+		 */
+		
+		String startFileName = "resources/seed.txt";
+		String testFile = "resources/test.txt";
+		String activeTrain = "resources/AL.txt";
 
 		System.out.println("loading seed data");
 		Document startData = readLabeledData(startFileName);
