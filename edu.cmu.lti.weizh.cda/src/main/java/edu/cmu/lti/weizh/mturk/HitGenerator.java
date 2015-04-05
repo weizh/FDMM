@@ -16,7 +16,7 @@ import edu.cmu.lti.weizh.docmodel.Sentence;
 import edu.cmu.lti.weizh.docmodel.Word;
 import edu.cmu.lti.weizh.eval.EVAL_CONSTS;
 import edu.cmu.lti.weizh.mlmodel.FDMM;
-import edu.cmu.lti.weizh.train.FeatureConstants;
+import edu.cmu.lti.weizh.train.FEATURECONSTS;
 import edu.cmu.lti.weizh.train.Inferencer;
 import edu.cmu.lti.weizh.utils.Stemmer;
 

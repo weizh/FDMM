@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import edu.cmu.lti.weizh.docmodel.Document;
-import edu.cmu.lti.weizh.train.FeatureConstants;
+import edu.cmu.lti.weizh.train.FEATURECONSTS;
 import gnu.trove.iterator.TIntIntIterator;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.iterator.TObjectIntIterator;
@@ -242,7 +242,7 @@ public class FDMM extends MLModel {
 			while (ei.hasNext()) { // each state for word i
 				ei.advance();
 				int label = ei.key();
-				if (label == (LID.get(FeatureConstants.SENTSTART)))
+				if (label == (LID.get(FEATURECONSTS.SENTSTART)))
 					continue;
 
 				// emit
@@ -266,7 +266,7 @@ public class FDMM extends MLModel {
 				// transition
 				if (wordi == 0) {
 					// System.out.println(LID.get(Global.SENTSTART));
-					TIntIntHashMap fvalDist = phis.get(FID.get(transitionArray.get(wordi)[0])).get(LID.get(FeatureConstants.SENTSTART));
+					TIntIntHashMap fvalDist = phis.get(FID.get(transitionArray.get(wordi)[0])).get(LID.get(FEATURECONSTS.SENTSTART));
 					int transNum = fvalDist.get(DID.get(ei.value()));
 					int transDenom = fvalDist.get(LID.get(TOTAL));
 					double trans = (transNum + beta) / (transDenom + beta * (LID2LString.size() - 1));
@@ -283,7 +283,7 @@ public class FDMM extends MLModel {
 					while (pei.hasNext()) { // each state for word i
 						pei.advance();
 						int plabel = pei.key();
-						if (plabel == (LID.get(FeatureConstants.SENTSTART)))
+						if (plabel == (LID.get(FEATURECONSTS.SENTSTART)))
 							continue;
 						// accumulative of state j for prev word
 						double prevAccum = logProb[wordi - 1][plabel];
@@ -345,7 +345,7 @@ public class FDMM extends MLModel {
 			while (citer.hasNext()) { // for every state of the current word
 				citer.advance();
 				int cLabelId = citer.key();
-				if (cLabelId == LID.get(FeatureConstants.SENTSTART))
+				if (cLabelId == LID.get(FEATURECONSTS.SENTSTART))
 					continue;
 
 				// 1 logP(c label | c word)
@@ -369,7 +369,7 @@ public class FDMM extends MLModel {
 					// add the transition prob. from sentence start to state of
 					// current word
 					int featurename = FID.get(transValues[0]);
-					int prevState = LID.get(FeatureConstants.SENTSTART);
+					int prevState = LID.get(FEATURECONSTS.SENTSTART);
 					int currentState = DID.get(citer.value());
 					TIntIntHashMap startphis = phis.get(featurename).get(prevState);
 					double transFromStart = (startphis.get(currentState) + gamma)
@@ -388,7 +388,7 @@ public class FDMM extends MLModel {
 				while (piter.hasNext()) { // for every previous word
 					piter.advance();
 					int pLabelId = piter.key();
-					if (pLabelId == LID.get(FeatureConstants.SENTSTART))
+					if (pLabelId == LID.get(FEATURECONSTS.SENTSTART))
 						continue;
 					// previous slot logProb + P( cLabel | pLabel) indexed by
 					// feature type.
@@ -428,7 +428,7 @@ public class FDMM extends MLModel {
 		TIntObjectIterator<String> lastiter = LID2LString.iterator();
 		while (lastiter.hasNext()) { // for every previous word
 			lastiter.advance();
-			if (lastiter.key() == LID.get(FeatureConstants.SENTSTART))
+			if (lastiter.key() == LID.get(FEATURECONSTS.SENTSTART))
 				continue;
 			// prev accumulate log prob
 			double prevAccumProb = logProb[logProb.length - 1][lastiter.key()];
@@ -514,38 +514,38 @@ public class FDMM extends MLModel {
 				String[] newfeat = new String[feat.length + 2];
 				for (int j = 0; j < feat.length; j++)
 					newfeat[j] = feat[j];
-				newfeat[newfeat.length - 2] = FeatureConstants.N1TYPE;
+				newfeat[newfeat.length - 2] = FEATURECONSTS.N1TYPE;
 				newfeat[newfeat.length - 1] = "[n1type]";
 				predictions[i] = predict(theta2.get(i), d, e, newfeat);
 			} else if (i == theta2.size() - 2) {
 				String[] newfeat = new String[feat.length + 4];
 				for (int j = 0; j < feat.length; j++)
 					newfeat[j] = feat[j];
-				newfeat[newfeat.length - 2] = FeatureConstants.N2TYPE;
+				newfeat[newfeat.length - 2] = FEATURECONSTS.N2TYPE;
 				newfeat[newfeat.length - 1] = "[n1type]";
-				newfeat[newfeat.length - 4] = FeatureConstants.N1TYPE;
+				newfeat[newfeat.length - 4] = FEATURECONSTS.N1TYPE;
 				newfeat[newfeat.length - 3] = predictions[i + 1];
 				predictions[i] = predict(theta2.get(i), d, e, newfeat);
 			} else if (i == theta2.size() - 3) {
 				String[] newfeat = new String[feat.length + 6];
 				for (int j = 0; j < feat.length; j++)
 					newfeat[j] = feat[j];
-				newfeat[newfeat.length - 2] = FeatureConstants.N3TYPE;
+				newfeat[newfeat.length - 2] = FEATURECONSTS.N3TYPE;
 				newfeat[newfeat.length - 1] = "[n1type]";
-				newfeat[newfeat.length - 4] = FeatureConstants.N2TYPE;
+				newfeat[newfeat.length - 4] = FEATURECONSTS.N2TYPE;
 				newfeat[newfeat.length - 3] = predictions[i + 2];
-				newfeat[newfeat.length - 6] = FeatureConstants.N1TYPE;
+				newfeat[newfeat.length - 6] = FEATURECONSTS.N1TYPE;
 				newfeat[newfeat.length - 5] = predictions[i + 1];
 				predictions[i] = predict(theta2.get(i), d, e, newfeat);
 			} else if (i < theta2.size() - 3) {
 				String[] newfeat = new String[feat.length + 6];
 				for (int j = 0; j < feat.length; j++)
 					newfeat[j] = feat[j];
-				newfeat[newfeat.length - 2] = FeatureConstants.N3TYPE;
+				newfeat[newfeat.length - 2] = FEATURECONSTS.N3TYPE;
 				newfeat[newfeat.length - 1] = predictions[i + 3];
-				newfeat[newfeat.length - 4] = FeatureConstants.N2TYPE;
+				newfeat[newfeat.length - 4] = FEATURECONSTS.N2TYPE;
 				newfeat[newfeat.length - 3] = predictions[i + 2];
-				newfeat[newfeat.length - 6] = FeatureConstants.N1TYPE;
+				newfeat[newfeat.length - 6] = FEATURECONSTS.N1TYPE;
 				newfeat[newfeat.length - 5] = predictions[i + 1];
 				predictions[i] = predict(theta2.get(i), d, e, newfeat);
 			}

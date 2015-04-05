@@ -3,7 +3,7 @@ package edu.cmu.lti.weizh.train;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class FeatureConstants {
+public class FEATURECONSTS {
 
 	public static final String SENTSTART = "<SENTSTART>", SENTEND = "<SENTEND>";
 	public static final String E_PERSON = "PERSON", E_NORP = "NORP", E_FAC = "FAC", E_ORG = "ORG", E_LOC = "LOC",

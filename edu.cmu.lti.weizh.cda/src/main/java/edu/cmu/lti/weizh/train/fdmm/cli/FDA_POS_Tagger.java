@@ -7,7 +7,7 @@ import edu.cmu.lti.weizh.docmodel.Sentence;
 import edu.cmu.lti.weizh.docmodel.Word;
 import edu.cmu.lti.weizh.mlmodel.FDMM;
 import edu.cmu.lti.weizh.nlp.Tagger;
-import edu.cmu.lti.weizh.train.FeatureConstants;
+import edu.cmu.lti.weizh.train.FEATURECONSTS;
 import edu.cmu.lti.weizh.utils.Stemmer;
 
 public class FDA_POS_Tagger implements Tagger {
@@ -114,14 +114,14 @@ public class FDA_POS_Tagger implements Tagger {
 			theta.add(thetaIndex);
 			features.add(new String[] {
 					// Global.CTOK,ctok,
-					FeatureConstants.CSUF, csuf, FeatureConstants.CFORM, cform, FeatureConstants.CCAP, ccap,
+					FEATURECONSTS.CSUF, csuf, FEATURECONSTS.CFORM, cform, FEATURECONSTS.CCAP, ccap,
 					// Global.P1TOK,p1tok,
 					// Global.P1CAP, p1cap, Global.N1CAP,n1cap, //
 					// hurt.
-					FeatureConstants.P1SUF, p1suf, FeatureConstants.N1SUF, n1suf
+					FEATURECONSTS.P1SUF, p1suf, FEATURECONSTS.N1SUF, n1suf
 			// ,Global.P1FORM,p1form,Global.N1FORM, n1form
 			});
-			transition.add(new String[] { FeatureConstants.N1TYPE, n1type });
+			transition.add(new String[] { FEATURECONSTS.N1TYPE, n1type });
 		}
 
 		String[] labels = modeltagger.viterbiDecode(theta, features, transition, 1E-5, 1E-5, 1E-5, true);

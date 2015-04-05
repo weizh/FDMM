@@ -16,7 +16,7 @@ import edu.cmu.lti.weizh.docmodel.Sentence;
 import edu.cmu.lti.weizh.docmodel.Word;
 import edu.cmu.lti.weizh.eval.EVAL_CONSTS;
 import edu.cmu.lti.weizh.mlmodel.FDMM;
-import edu.cmu.lti.weizh.train.FeatureConstants;
+import edu.cmu.lti.weizh.train.FEATURECONSTS;
 import edu.cmu.lti.weizh.train.Inferencer;
 import edu.cmu.lti.weizh.utils.Stemmer;
 
@@ -181,9 +181,9 @@ public class ONFDatasetEvaluator implements Inferencer<FDMM, OntonotesDataSet> {
 							}
 						}
 						String[] thetaIndex = new String[] { ctok, cpos, cunif };
-						String label = fdamodel.predict(thetaIndex, 1E-5, 1E-5, FeatureConstants.P1TOK, p1tok, FeatureConstants.N1TOK, n1tok,
-								FeatureConstants.P2TOK, p2tok, FeatureConstants.N2TOK, n2tok, FeatureConstants.P3TOK, p3tok, FeatureConstants.N3TOK, n3tok, FeatureConstants.P4TOK,
-								p4tok, FeatureConstants.N4TOK, n4tok, FeatureConstants.P5TOK, p5tok, FeatureConstants.N5TOK, n5tok);
+						String label = fdamodel.predict(thetaIndex, 1E-5, 1E-5, FEATURECONSTS.P1TOK, p1tok, FEATURECONSTS.N1TOK, n1tok,
+								FEATURECONSTS.P2TOK, p2tok, FEATURECONSTS.N2TOK, n2tok, FEATURECONSTS.P3TOK, p3tok, FEATURECONSTS.N3TOK, n3tok, FEATURECONSTS.P4TOK,
+								p4tok, FEATURECONSTS.N4TOK, n4tok, FEATURECONSTS.P5TOK, p5tok, FEATURECONSTS.N5TOK, n5tok);
 						ne.setPrediction(label);
 					}
 				}
@@ -322,27 +322,27 @@ public class ONFDatasetEvaluator implements Inferencer<FDMM, OntonotesDataSet> {
 
 						String[] thetaIndex = new String[] { origintok, ctok, Stemmer.stemTerm(ctok), cpos + "_" + csuf, cpos,
 								ccap + "_" + csuf, csuf, cpref, cform, ccap, "[DUMMY]" };
-						String label = fdamodel.predict(thetaIndex, 1E-5, 1E-5, FeatureConstants.CCAP, ccap, FeatureConstants.CPOS, cpos,
-								FeatureConstants.CSUF, csuf, FeatureConstants.CFORM, cform, FeatureConstants.P1TOK, Stemmer.stemTerm(p1tok), FeatureConstants.N1TOK,
-								Stemmer.stemTerm(n1tok), FeatureConstants.P2TOK, Stemmer.stemTerm(p2tok), FeatureConstants.N2TOK,
+						String label = fdamodel.predict(thetaIndex, 1E-5, 1E-5, FEATURECONSTS.CCAP, ccap, FEATURECONSTS.CPOS, cpos,
+								FEATURECONSTS.CSUF, csuf, FEATURECONSTS.CFORM, cform, FEATURECONSTS.P1TOK, Stemmer.stemTerm(p1tok), FEATURECONSTS.N1TOK,
+								Stemmer.stemTerm(n1tok), FEATURECONSTS.P2TOK, Stemmer.stemTerm(p2tok), FEATURECONSTS.N2TOK,
 								Stemmer.stemTerm(n2tok)
 								// , Global.P1SUF, p1suf, Global.N1SUF, n1suf //
 								// hurt
 								// , Global.P1FORM, p1form,Global.N1FORM, n1form
 								// //hurt
-								, FeatureConstants.P1CAP, p1cap, FeatureConstants.N1CAP, n1cap
+								, FEATURECONSTS.P1CAP, p1cap, FEATURECONSTS.N1CAP, n1cap
 								// , Global.P1POS, p1pos,Global.N1POS,
 								// n1pos//hurt
-								, FeatureConstants.P2CAP, p2cap
+								, FEATURECONSTS.P2CAP, p2cap
 								// ,Global.N2CAP, n2cap // hurt
 								// , Global.P2POS, p2pos, Global.N2POS,
 								// n2pos//hurt
-								, FeatureConstants.P3TOK, Stemmer.stemTerm(p3tok), FeatureConstants.N3TOK, Stemmer.stemTerm(n3tok)// help
+								, FEATURECONSTS.P3TOK, Stemmer.stemTerm(p3tok), FEATURECONSTS.N3TOK, Stemmer.stemTerm(n3tok)// help
 								// ,Global.P3CAP,p3cap, Global.N3CAP, n3cap
 								// //hurt
 								// ,Global.P3POS, p3pos, Global.N3POS, n3pos//
 								// hurt
-								, FeatureConstants.P1TYPE, p1type
+								, FEATURECONSTS.P1TYPE, p1type
 
 						);
 						word.setPrediction(label);
@@ -488,19 +488,19 @@ public class ONFDatasetEvaluator implements Inferencer<FDMM, OntonotesDataSet> {
 								ccap + "_" + csuf, csuf, cpref, cform, ccap, "[DUMMY]" };
 						theta.add(thetaIndex);
 
-						String[] feature = new String[] { FeatureConstants.CCAP, ccap, FeatureConstants.CPOS, cpos, // help
-								FeatureConstants.CSUF, csuf, // help
+						String[] feature = new String[] { FEATURECONSTS.CCAP, ccap, FEATURECONSTS.CPOS, cpos, // help
+								FEATURECONSTS.CSUF, csuf, // help
 								// Global.CFORM,cform,
-								FeatureConstants.CPREF, cpref, // help
-								FeatureConstants.P1TOK, Stemmer.stemTerm(p1tok),// help
-								FeatureConstants.N1TOK, Stemmer.stemTerm(n1tok),// help
+								FEATURECONSTS.CPREF, cpref, // help
+								FEATURECONSTS.P1TOK, Stemmer.stemTerm(p1tok),// help
+								FEATURECONSTS.N1TOK, Stemmer.stemTerm(n1tok),// help
 
 								// Global.P1SUF, p1suf, Global.N1SUF, n1suf,
-								FeatureConstants.P1CAP, p1cap, // help
-								FeatureConstants.N1CAP, n1cap, // help
+								FEATURECONSTS.P1CAP, p1cap, // help
+								FEATURECONSTS.N1CAP, n1cap, // help
 
-								FeatureConstants.P2CAP, p2cap, // help
-								FeatureConstants.N2CAP, n2cap // help
+								FEATURECONSTS.P2CAP, p2cap, // help
+								FEATURECONSTS.N2CAP, n2cap // help
 						// , Global.P2POS, p2pos
 						// , Global.N2POS, n2pos
 
@@ -513,7 +513,7 @@ public class ONFDatasetEvaluator implements Inferencer<FDMM, OntonotesDataSet> {
 						};
 						features.add(feature);
 
-						transition.add(new String[] { FeatureConstants.N1TYPE, n1type });
+						transition.add(new String[] { FEATURECONSTS.N1TYPE, n1type });
 
 					}
 
@@ -631,14 +631,14 @@ public class ONFDatasetEvaluator implements Inferencer<FDMM, OntonotesDataSet> {
 						theta.add(thetaIndex);
 						features.add(new String[] {
 								// Global.CTOK,ctok,
-								FeatureConstants.CSUF, csuf, FeatureConstants.CFORM, cform, FeatureConstants.CCAP, ccap,
+								FEATURECONSTS.CSUF, csuf, FEATURECONSTS.CFORM, cform, FEATURECONSTS.CCAP, ccap,
 								// Global.P1TOK,p1tok,
 								// Global.P1CAP, p1cap, Global.N1CAP,n1cap, //
 								// hurt.
-								FeatureConstants.P1SUF, p1suf, FeatureConstants.N1SUF, n1suf
+								FEATURECONSTS.P1SUF, p1suf, FEATURECONSTS.N1SUF, n1suf
 						// ,Global.P1FORM,p1form,Global.N1FORM, n1form
 						});
-						transition.add(new String[] { FeatureConstants.N1TYPE, n1type });
+						transition.add(new String[] { FEATURECONSTS.N1TYPE, n1type });
 					}
 
 					String[] labels = fdamodel.viterbiDecode(theta, features, transition, 1E-5, 1E-5, 1E-5, true);
@@ -753,17 +753,17 @@ public class ONFDatasetEvaluator implements Inferencer<FDMM, OntonotesDataSet> {
 						String[] thetaIndex = new String[] { origintok, ctok, Stemmer.stemTerm(ctok), csuf, cform, ccap, cunif };
 						String label = fdamodel.predict(thetaIndex, 1E-5, 1E-5,
 
-						FeatureConstants.CSUF, csuf,
+						FEATURECONSTS.CSUF, csuf,
 						// Global.CTOK,ctok, //hurt
-						 FeatureConstants.N1TYPE, n1type, //help
+						 FEATURECONSTS.N1TYPE, n1type, //help
 						// Global.N2TYPE, n2type, Global.N3TYPE, n3type, //help
 						// Global.P1TYPE,p1type,//help
 						// Global.P2TYPE, p2type, Global.P3TYPE, p3type, //help
-								FeatureConstants.P1TOK, p1tok, FeatureConstants.CFORM, cform // help.
+								FEATURECONSTS.P1TOK, p1tok, FEATURECONSTS.CFORM, cform // help.
 								// ,Global.P1FORM,p1form,Global.N1FORM, n1form
 								// // hurt.
-								, FeatureConstants.CCAP, ccap, FeatureConstants.P1CAP, p1cap, FeatureConstants.N1CAP, n1cap // hurt.
-								, FeatureConstants.P1SUF, p1suf, FeatureConstants.N1SUF, n1suf // help
+								, FEATURECONSTS.CCAP, ccap, FEATURECONSTS.P1CAP, p1cap, FEATURECONSTS.N1CAP, n1cap // hurt.
+								, FEATURECONSTS.P1SUF, p1suf, FEATURECONSTS.N1SUF, n1suf // help
 								// , Global.P2SUF, p2suf, Global.N2SUF, n2suf
 								// //hurt, not too much.
 								);
@@ -879,12 +879,12 @@ public class ONFDatasetEvaluator implements Inferencer<FDMM, OntonotesDataSet> {
 						String[] thetaIndex = new String[] { origintok, ctok, Stemmer.stemTerm(ctok), csuf, cform, ccap, cunif };
 						theta.add(thetaIndex);
 
-						features.add(new String[] { FeatureConstants.CSUF, csuf, FeatureConstants.CFORM, cform, FeatureConstants.CCAP, ccap, FeatureConstants.CTOK, ctok,
-								FeatureConstants.P1TOK, p1tok, FeatureConstants.P1CAP, p1cap, FeatureConstants.N1CAP, n1cap, // hurt.
-								FeatureConstants.P1SUF, p1suf, FeatureConstants.N1SUF, n1suf, FeatureConstants.P1FORM, p1form, FeatureConstants.N1FORM, n1form
+						features.add(new String[] { FEATURECONSTS.CSUF, csuf, FEATURECONSTS.CFORM, cform, FEATURECONSTS.CCAP, ccap, FEATURECONSTS.CTOK, ctok,
+								FEATURECONSTS.P1TOK, p1tok, FEATURECONSTS.P1CAP, p1cap, FEATURECONSTS.N1CAP, n1cap, // hurt.
+								FEATURECONSTS.P1SUF, p1suf, FEATURECONSTS.N1SUF, n1suf, FEATURECONSTS.P1FORM, p1form, FEATURECONSTS.N1FORM, n1form
 
 						});
-						transition.add(new String[] { FeatureConstants.N1TYPE, n1type, FeatureConstants.N2TYPE, n2type, FeatureConstants.N3TYPE, n3type });
+						transition.add(new String[] { FEATURECONSTS.N1TYPE, n1type, FEATURECONSTS.N2TYPE, n2type, FEATURECONSTS.N3TYPE, n3type });
 
 					}
 

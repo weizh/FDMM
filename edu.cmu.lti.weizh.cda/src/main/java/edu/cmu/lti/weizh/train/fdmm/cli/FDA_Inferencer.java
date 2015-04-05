@@ -12,7 +12,7 @@ import edu.cmu.lti.weizh.docmodel.Word;
 import edu.cmu.lti.weizh.mlmodel.FDMM;
 import edu.cmu.lti.weizh.nlp.BreakIterator_Java;
 import edu.cmu.lti.weizh.nlp.EuroLangTwokenizer;
-import edu.cmu.lti.weizh.train.FeatureConstants;
+import edu.cmu.lti.weizh.train.FEATURECONSTS;
 import edu.cmu.lti.weizh.train.Inferencer;
 import edu.cmu.lti.weizh.utils.BKTree;
 import edu.cmu.lti.weizh.utils.Dictionary;
@@ -292,21 +292,21 @@ public class FDA_Inferencer implements Inferencer<FDMM, OntonotesDataSet> {
 			String[] thetaIndex = new String[] { Stemmer.stemTerm(ctok), cform + "_" + cpos, cpos };
 			String label = null;
 			try {
-				label = this.nermodel.predict(thetaIndex, 1E-5, 1E-5, FeatureConstants.CCAP, ccap, FeatureConstants.CPOS, cpos, FeatureConstants.CSUF, csuf,
-						FeatureConstants.CFORM, cform, FeatureConstants.P1TYPE, p1type, FeatureConstants.P2TYPE, p2type,
+				label = this.nermodel.predict(thetaIndex, 1E-5, 1E-5, FEATURECONSTS.CCAP, ccap, FEATURECONSTS.CPOS, cpos, FEATURECONSTS.CSUF, csuf,
+						FEATURECONSTS.CFORM, cform, FEATURECONSTS.P1TYPE, p1type, FEATURECONSTS.P2TYPE, p2type,
 						// Global.P3TYPE, p3type,
-						FeatureConstants.P1TOK, Stemmer.stemTerm(p1tok), FeatureConstants.N1TOK, Stemmer.stemTerm(n1tok), FeatureConstants.P2TOK,
-						Stemmer.stemTerm(p2tok), FeatureConstants.N2TOK, Stemmer.stemTerm(n2tok),
+						FEATURECONSTS.P1TOK, Stemmer.stemTerm(p1tok), FEATURECONSTS.N1TOK, Stemmer.stemTerm(n1tok), FEATURECONSTS.P2TOK,
+						Stemmer.stemTerm(p2tok), FEATURECONSTS.N2TOK, Stemmer.stemTerm(n2tok),
 						// Global.P1SUF, p1suf, Global.N1SUF, n1suf,
 
 						// Global.P1FORM, p1form, Global.N1FORM, n1form,
 
-						FeatureConstants.P1CAP, p1cap, FeatureConstants.N1CAP, n1cap
+						FEATURECONSTS.P1CAP, p1cap, FEATURECONSTS.N1CAP, n1cap
 
 						// , Global.P1POS, p1pos
 						// , Global.N1POS, n1pos
 
-						, FeatureConstants.P2CAP, p2cap
+						, FEATURECONSTS.P2CAP, p2cap
 				// , Global.N2CAP, n2cap
 				// , Global.P2POS, p2pos
 				// , Global.N2POS, n2pos
@@ -408,7 +408,7 @@ public class FDA_Inferencer implements Inferencer<FDMM, OntonotesDataSet> {
 			String[] thetaIndex = new String[] { Stemmer.stemTerm(ctok), ccap, cunif };
 			String label = null;
 			try {
-				label = this.posmodel.predict(thetaIndex, 1E-5, 1E-5, FeatureConstants.CSUF, csuf
+				label = this.posmodel.predict(thetaIndex, 1E-5, 1E-5, FEATURECONSTS.CSUF, csuf
 				// ,Global.P1END,p1end
 				// ,Global.P1TYPE,p1type
 				// ,Global.P2TYPE,p2type
@@ -416,7 +416,7 @@ public class FDA_Inferencer implements Inferencer<FDMM, OntonotesDataSet> {
 				// ,Global.CFORM, cform
 				// , Global.CCAP, ccap
 				// , Global.P1CAP, p1cap, Global.N1CAP,n1cap
-						, FeatureConstants.P1SUF, p1suf, FeatureConstants.N1SUF, n1suf, FeatureConstants.P2SUF, p2suf, FeatureConstants.N2SUF, n2suf
+						, FEATURECONSTS.P1SUF, p1suf, FEATURECONSTS.N1SUF, n1suf, FEATURECONSTS.P2SUF, p2suf, FEATURECONSTS.N2SUF, n2suf
 
 				);
 			} catch (Exception e) {

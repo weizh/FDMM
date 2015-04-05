@@ -27,7 +27,7 @@ import edu.cmu.lti.weizh.eval.Result;
 import edu.cmu.lti.weizh.mlmodel.FDA;
 import edu.cmu.lti.weizh.mlmodel.FDMM;
 import edu.cmu.lti.weizh.nlp.EuroLangTwokenizer;
-import edu.cmu.lti.weizh.train.FeatureConstants;
+import edu.cmu.lti.weizh.train.FEATURECONSTS;
 import edu.cmu.lti.weizh.train.fdmm.cli.FDA_POS_Tagger;
 import edu.cmu.lti.weizh.utils.Stemmer;
 
@@ -323,12 +323,12 @@ public class TweetOnlineLearner {
 		String sn3tok = Stemmer.stemTerm(n3tok);
 
 		String[] thetaIndex = new String[] { origintok, "[DUMMY]" };
-		String[] featurevalues = new String[] { FeatureConstants.P1TOK, sp1tok, FeatureConstants.N1TOK, sn1tok, FeatureConstants.P1POS, p1pos, FeatureConstants.N1POS,
-				n1pos, FeatureConstants.P1SUF, p1suf, FeatureConstants.N1SUF, n1suf,
+		String[] featurevalues = new String[] { FEATURECONSTS.P1TOK, sp1tok, FEATURECONSTS.N1TOK, sn1tok, FEATURECONSTS.P1POS, p1pos, FEATURECONSTS.N1POS,
+				n1pos, FEATURECONSTS.P1SUF, p1suf, FEATURECONSTS.N1SUF, n1suf,
 
 				// added
-				FeatureConstants.P1FORM, p1form, FeatureConstants.N1FORM, n1form, FeatureConstants.P2TOK, sp2tok, FeatureConstants.N2TOK, sn2tok, FeatureConstants.P2POS, p2pos,
-				FeatureConstants.N2POS, n2pos, FeatureConstants.P1FORM, p1form, FeatureConstants.N1FORM, n1form, FeatureConstants.P1CAP, p1cap, FeatureConstants.N1CAP, n1cap
+				FEATURECONSTS.P1FORM, p1form, FEATURECONSTS.N1FORM, n1form, FEATURECONSTS.P2TOK, sp2tok, FEATURECONSTS.N2TOK, sn2tok, FEATURECONSTS.P2POS, p2pos,
+				FEATURECONSTS.N2POS, n2pos, FEATURECONSTS.P1FORM, p1form, FEATURECONSTS.N1FORM, n1form, FEATURECONSTS.P1CAP, p1cap, FEATURECONSTS.N1CAP, n1cap
 
 		};
 		Prediction p = fdamodel.predict(thetaIndex, 1E-5, 1E-5, featurevalues);
@@ -446,57 +446,57 @@ public class TweetOnlineLearner {
 		String sn3tok = Stemmer.stemTerm(n3tok);
 
 		for (String s : new String[] { origintok, "[DUMMY]" }) {
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P1TOK, sp1tok);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P2TOK, sp2tok);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P3TOK, sp3tok);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P1TOK, sp1tok);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P2TOK, sp2tok);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P3TOK, sp3tok);
 
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N1TOK, sn1tok);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N2TOK, sn2tok);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N3TOK, sn3tok);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N1TOK, sn1tok);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N2TOK, sn2tok);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N3TOK, sn3tok);
 
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P1POS, p1pos);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P2POS, p2pos);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P3POS, p3pos);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N1POS, n1pos);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N2POS, n2pos);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N3POS, n3pos);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P1POS, p1pos);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P2POS, p2pos);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P3POS, p3pos);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N1POS, n1pos);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N2POS, n2pos);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N3POS, n3pos);
 
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P1CAP, p1cap);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P2CAP, p2cap);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P3CAP, p3cap);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N1CAP, n1cap);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N2CAP, n2cap);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N3CAP, n3cap);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P1CAP, p1cap);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P2CAP, p2cap);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P3CAP, p3cap);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N1CAP, n1cap);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N2CAP, n2cap);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N3CAP, n3cap);
 
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P1SUF, p1suf);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P2SUF, p2suf);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P3SUF, p3suf);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N1SUF, n1suf);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N2SUF, n2suf);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N3SUF, n3suf);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P1SUF, p1suf);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P2SUF, p2suf);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P3SUF, p3suf);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N1SUF, n1suf);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N2SUF, n2suf);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N3SUF, n3suf);
 
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P1PREF, p1pref);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P2PREF, p2pref);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P3PREF, p3pref);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N1PREF, n1pref);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N2PREF, n2pref);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N3PREF, n3pref);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P1PREF, p1pref);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P2PREF, p2pref);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P3PREF, p3pref);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N1PREF, n1pref);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N2PREF, n2pref);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N3PREF, n3pref);
 
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P1FORM, p1form);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P2FORM, p2form);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P3FORM, p3form);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N1FORM, n1form);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N2FORM, n2form);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N3FORM, n3form);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P1FORM, p1form);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P2FORM, p2form);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P3FORM, p3form);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N1FORM, n1form);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N2FORM, n2form);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N3FORM, n3form);
 
 			// add previous label feature.
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P1TYPE, p1type);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P2TYPE, p2type);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.P3TYPE, p3type);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P1TYPE, p1type);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P2TYPE, p2type);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.P3TYPE, p3type);
 
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N1TYPE, n1type);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N2TYPE, n2type);
-			fdamodel.add(s, ne.getEntityType(), FeatureConstants.N3TYPE, n3type);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N1TYPE, n1type);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N2TYPE, n2type);
+			fdamodel.add(s, ne.getEntityType(), FEATURECONSTS.N3TYPE, n3type);
 		}
 	}
 
