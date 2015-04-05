@@ -1,4 +1,4 @@
-CDA
+FDMM
 ===
 
-context dirichlet allocation code
+Feature Dirichlet Markov Models
