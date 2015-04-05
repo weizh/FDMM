@@ -7,27 +7,28 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.List;
 
-import edu.cmu.lti.weizh.Interface.Inferencer;
-import edu.cmu.lti.weizh.fda.FDA_MLModel;
-import edu.cmu.lti.weizh.models.Document;
-import edu.cmu.lti.weizh.models.Global;
-import edu.cmu.lti.weizh.models.NamedEntity;
-import edu.cmu.lti.weizh.models.Paragraph;
-import edu.cmu.lti.weizh.models.Sentence;
-import edu.cmu.lti.weizh.models.Word;
-import edu.cmu.lti.weizh.ontonotes.ONFImporter;
-import edu.cmu.lti.weizh.ontonotes.ONF_DataSet;
+import edu.cmu.lti.weizh.data.ontonotes.OntoNotesDataFiller;
+import edu.cmu.lti.weizh.data.ontonotes.OntonotesDataSet;
+import edu.cmu.lti.weizh.docmodel.Document;
+import edu.cmu.lti.weizh.docmodel.NamedEntity;
+import edu.cmu.lti.weizh.docmodel.Paragraph;
+import edu.cmu.lti.weizh.docmodel.Sentence;
+import edu.cmu.lti.weizh.docmodel.Word;
+import edu.cmu.lti.weizh.eval.EVAL_CONSTS;
+import edu.cmu.lti.weizh.mlmodel.FDMM;
+import edu.cmu.lti.weizh.train.FeatureConstants;
+import edu.cmu.lti.weizh.train.Inferencer;
 import edu.cmu.lti.weizh.utils.Stemmer;
 
 public class HitGenerator {
 
 	public static void main(String arv[]) throws Exception {
 
-		ONF_DataSet onf = new ONF_DataSet();
+		OntonotesDataSet onf = new OntonotesDataSet(199999, EVAL_CONSTS.NER_TYPE);
 		String path = "C:/Users/Wynn/Documents/wynnzh/data/LDC/data/english/annotations/";
 
 		System.out.println("loading data:");
-		ONFImporter.fill(new File(path), onf);
+		new OntoNotesDataFiller(onf).fill(new File(path));
 
 		// onf.fillCVFolds("10-crf-split.txt");
 
@@ -35,7 +36,7 @@ public class HitGenerator {
 
 	}
 
-	public static void generateMockupFiles(ONF_DataSet fdadata) throws Exception {
+	public static void generateMockupFiles(OntonotesDataSet fdadata) throws Exception {
 
 		BufferedReader r1 = new BufferedReader(new FileReader("mturk-template1.txt"));
 		BufferedReader r2 = new BufferedReader(new FileReader("mturk-template2.txt"));
