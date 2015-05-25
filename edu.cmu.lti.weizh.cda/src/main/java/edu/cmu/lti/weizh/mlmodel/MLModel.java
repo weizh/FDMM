@@ -3,7 +3,7 @@ package edu.cmu.lti.weizh.mlmodel;
 import java.io.IOException;
 import java.io.Serializable;
 
-public abstract class MLModel implements Serializable {
+public abstract class MLModel<FEATURETYPE> implements Serializable {
 
 	/**
 	 * 

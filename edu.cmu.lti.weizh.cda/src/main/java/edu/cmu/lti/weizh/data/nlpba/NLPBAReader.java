@@ -22,9 +22,9 @@ public class NLPBAReader extends AbstractSentenceReader {
 		String line = null;
 		while ((line = reader.readLine()) != null) {
 			if (line.length() != 0) {
-				String[] t = line.trim().split(" ");
+				String[] t = line.trim().split("	");
 				Word w = new Word(t[0]);
-				w.setChunkType(t[1]);
+				w.setEntityType(t[1]);
 				words.add(w);
 			} else {
 				if (words.size() != 0) {

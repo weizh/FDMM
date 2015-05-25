@@ -41,16 +41,16 @@ public class Phrase {
 
 	public String getLemma() {
 		if (start == end)
-			return sent.getWords().get(start).getLemma().toString();
+			return sent.getWords().get(start).getTrimLowered().toString();
 		else if (start == end - 1)
-			return sent.getWords().get(start).getLemma() + '-' + sent.getWords().get(end).getLemma();
+			return sent.getWords().get(start).getTrimLowered() + '-' + sent.getWords().get(end).getTrimLowered();
 		else if (start == end - 2)
-			return sent.getWords().get(start).getLemma() + '-' + sent.getWords().get(start + 1).getLemma() + '-'
-					+ sent.getWords().get(end).getLemma();
+			return sent.getWords().get(start).getTrimLowered() + '-' + sent.getWords().get(start + 1).getTrimLowered() + '-'
+					+ sent.getWords().get(end).getTrimLowered();
 		else {
-			StringBuilder sb = new StringBuilder(sent.getWords().get(start).getLemma());
+			StringBuilder sb = new StringBuilder(sent.getWords().get(start).getTrimLowered());
 			for (int i = start + 1; i <= end; i++)
-				sb.append("-").append(sent.getWords().get(i).getLemma());
+				sb.append("-").append(sent.getWords().get(i).getTrimLowered());
 			return sb.toString();
 		}
 	}

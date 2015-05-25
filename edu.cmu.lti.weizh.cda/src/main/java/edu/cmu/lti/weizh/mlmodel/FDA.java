@@ -16,7 +16,7 @@ import edu.cmu.lti.weizh.docmodel.Document;
 import edu.cmu.lti.weizh.docmodel.NamedEntity;
 import edu.cmu.lti.weizh.docmodel.Sentence;
 import edu.cmu.lti.weizh.eval.Prediction;
-import edu.cmu.lti.weizh.train.FEATURECONSTS;
+import edu.cmu.lti.weizh.feature.ONF_CONSTS;
 import gnu.trove.iterator.TIntIntIterator;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.iterator.TObjectIntIterator;

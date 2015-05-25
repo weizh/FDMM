@@ -122,7 +122,7 @@ public class Word implements Serializable {
 	
 	
 	////////////// Additional Methods //////////////////////
-	public String getLemma() {
+	public String getTrimLowered() {
 		return word.trim().toLowerCase();
 	}
 	

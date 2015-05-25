@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import edu.cmu.lti.weizh.docmodel.Sentence;
 import edu.cmu.lti.weizh.docmodel.Word;
-import edu.cmu.lti.weizh.utils.Stemmer;
+import edu.cmu.lti.weizh.nlp.Stemmer;
 import gnu.trove.iterator.TIntIntIterator;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -63,21 +63,21 @@ public class HMM extends MLModel {
 		String prevw, curw, prevpos, curpos;
 		for (int i = 0; i <= s.getWords().size(); i++) {
 			if (i > 0 && i < s.getWords().size()) {
-				prevw = s.getWords().get(i - 1).getLemma();
+				prevw = s.getWords().get(i - 1).getTrimLowered();
 				prevpos = s.getWords().get(i - 1).getPartOfSpeech();
-				curw = s.getWords().get(i).getLemma();
+				curw = s.getWords().get(i).getTrimLowered();
 				curpos = s.getWords().get(i).getPartOfSpeech();
 				if (lemmatized)
 					curw = Stemmer.stemTerm(curw);
 			} else if (i == 0) {
 				prevw = StartSymbol;
 				prevpos = StartPOS;
-				curw = s.getWords().get(i).getLemma();
+				curw = s.getWords().get(i).getTrimLowered();
 				curpos = s.getWords().get(i).getPartOfSpeech();
 				if (lemmatized)
 					curw = Stemmer.stemTerm(curw);
 			} else {
-				prevw = s.getWords().get(i - 1).getLemma();
+				prevw = s.getWords().get(i - 1).getTrimLowered();
 				prevpos = s.getWords().get(i - 1).getPartOfSpeech();
 				curw = EndSymbol;
 				curpos = EndPOS;
@@ -134,7 +134,7 @@ public class HMM extends MLModel {
 			if (i == sent.getWords().size() + 1)
 				cw = EndSymbol;
 			else
-				cw =  Stemmer.stemTerm(sent.getWords().get(i-1).getLemma());
+				cw =  Stemmer.stemTerm(sent.getWords().get(i-1).getTrimLowered());
 
 			System.out.println(cw);
 

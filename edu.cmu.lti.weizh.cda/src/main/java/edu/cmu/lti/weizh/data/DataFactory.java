@@ -4,11 +4,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 import edu.cmu.lti.weizh.data.conll2000.CONLL2kReader;
+import edu.cmu.lti.weizh.data.nlpba.NLPBAReader;
 import edu.cmu.lti.weizh.eval.EVAL_CONSTS;
 
 public class DataFactory {
 
-	public CONLLFormatDataSet getCONLL2kTrain() {
+	public static CONLLFormatDataSet getCONLL2kTrain() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.CHUNK_TYPE);
 		CONLL2kReader c2kreader;
 		try {
@@ -25,7 +26,7 @@ public class DataFactory {
 		return data;
 	}
 
-	public CONLLFormatDataSet getCONLL2kTest() throws FileNotFoundException {
+	public static CONLLFormatDataSet getCONLL2kTest() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.CHUNK_TYPE);
 		CONLL2kReader c2kreader;
 		try {
@@ -42,7 +43,7 @@ public class DataFactory {
 		return data;
 	}
 
-	public CONLLFormatDataSet getCONLL02NEDTrain() {
+	public static CONLLFormatDataSet getCONLL02NEDTrain() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
 		CONLL2kReader c2kreader;
 		try {
@@ -60,7 +61,7 @@ public class DataFactory {
 
 	}
 
-	public CONLLFormatDataSet getCONLL02NEDTestA() {
+	public static CONLLFormatDataSet getCONLL02NEDTestA() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
 		CONLL2kReader c2kreader;
 		try {
@@ -78,7 +79,7 @@ public class DataFactory {
 
 	}
 
-	public CONLLFormatDataSet getCONLL02NEDTestB() {
+	public static CONLLFormatDataSet getCONLL02NEDTestB() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
 		CONLL2kReader c2kreader;
 		try {
@@ -96,7 +97,7 @@ public class DataFactory {
 
 	}
 
-	public CONLLFormatDataSet getCONLL02EspTrain() {
+	public static CONLLFormatDataSet getCONLL02EspTrain() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
 		CONLL2kReader c2kreader;
 		try {
@@ -114,7 +115,7 @@ public class DataFactory {
 
 	}
 
-	public CONLLFormatDataSet getCONLL02EspTestA() {
+	public static CONLLFormatDataSet getCONLL02EspTestA() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
 		CONLL2kReader c2kreader;
 		try {
@@ -133,7 +134,7 @@ public class DataFactory {
 
 	}
 
-	public CONLLFormatDataSet getCONLL02EspTestB() {
+	public static CONLLFormatDataSet getCONLL02EspTestB() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
 		CONLL2kReader c2kreader;
 		try {
@@ -152,13 +153,13 @@ public class DataFactory {
 
 	}
 
-	public CONLLFormatDataSet getNLPBATrain() {
+	public static CONLLFormatDataSet getNLPBATrain() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
-		CONLL2kReader c2kreader;
+		NLPBAReader nlpbareader;
 		try {
-			c2kreader = new CONLL2kReader((new FileReader(DATA_PATHS.NLPBATrain)));
+			nlpbareader = new NLPBAReader((new FileReader(DATA_PATHS.NLPBATrain)));
 
-			new CONLLFormatDataFiller(data, c2kreader).fill();
+			new CONLLFormatDataFiller(data, nlpbareader).fill();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -171,11 +172,11 @@ public class DataFactory {
 
 	}
 
-	public CONLLFormatDataSet getNLPBASampleTest() {
+	public static CONLLFormatDataSet getNLPBASampleTest() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
-		CONLL2kReader c2kreader;
+		NLPBAReader c2kreader;
 		try {
-			c2kreader = new CONLL2kReader((new FileReader(DATA_PATHS.NLPBASampleTest)));
+			c2kreader = new NLPBAReader((new FileReader(DATA_PATHS.NLPBASampleTest)));
 
 			new CONLLFormatDataFiller(data, c2kreader).fill();
 		} catch (FileNotFoundException e) {
@@ -189,11 +190,11 @@ public class DataFactory {
 
 	}
 
-	public CONLLFormatDataSet getNLPBAEval() {
+	public static CONLLFormatDataSet getNLPBAEval() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
-		CONLL2kReader c2kreader;
+		NLPBAReader c2kreader;
 		try {
-			c2kreader = new CONLL2kReader((new FileReader(DATA_PATHS.NLPBAEval)));
+			c2kreader = new NLPBAReader((new FileReader(DATA_PATHS.NLPBAEval)));
 
 			new CONLLFormatDataFiller(data, c2kreader).fill();
 		} catch (FileNotFoundException e) {
