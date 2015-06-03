@@ -26,7 +26,7 @@ public class NLPBAFDMMEvaluator extends AbstractFDMMEvaluator<CONLLFormatDataSet
 	double alpha = 1E-4;
 	double beta = 1E-5;
 	double gamma = 1E-5;
-	static final String TRANS_F_NAME = FCONST.nModif(FCONST.F_NE, 1);
+	static final String TRANS_F_NAME = FCONST.n(FCONST.F_NE, 1);
 
 	NLPBAFDMMEvaluator(NLPBAFDMMTrainer trainer) {
 		super(trainer);

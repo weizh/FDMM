@@ -37,7 +37,7 @@ public class NLPBAFDMMTrainer extends AbstractFDMMTrainer<String, CONLLFormatDat
 	public void train(CONLLFormatDataSet d) throws Exception {
 		for (Sentence s : d.getDocuments().get(0).getParagraphs().get(0).getSentences()) {
 			List<Word> words = s.getWords();
-			fdmm.add("<s>", FCONST.SENTSTART, new Feature<String>(FCONST.nModif(FCONST.F_NE, 1), s, -1));
+			fdmm.add("<s>", FCONST.SENTSTART, new Feature<String>(FCONST.n(FCONST.F_NE, 1), s, -1));
 
 			for (int i = 0; i < words.size(); i++) {
 				
@@ -53,13 +53,13 @@ public class NLPBAFDMMTrainer extends AbstractFDMMTrainer<String, CONLLFormatDat
 				
 				fdmm.add(theta, label, features);
 				
-				fdmm.add(theta, label, new Feature<String>(FCONST.nModif(FCONST.F_NE, 1), s, i));
+				fdmm.add(theta, label, new Feature<String>(FCONST.n(FCONST.F_NE, 1), s, i));
 				
 				if (i == words.size() - 1) {
 					fdmm.add(
 							theta, 
 							label, 
-							new Feature<String>(FCONST.nModif(FCONST.F_NE, 1), s,s.getWords().size())
+							new Feature<String>(FCONST.n(FCONST.F_NE, 1), s,s.getWords().size())
 					);
 				}
 			}
@@ -106,16 +106,16 @@ public class NLPBAFDMMTrainer extends AbstractFDMMTrainer<String, CONLLFormatDat
 //				FCONST.pFeatNameModif(FCONST.F_POS, 1),
 //				FCONST.nFeatNameModif(FCONST.F_POS, 1),
 
-				FCONST.pModif(FCONST.F_LEMMA, 1),
-				FCONST.pModif(FCONST.F_LEMMA, 2),
-				FCONST.nModif(FCONST.F_LEMMA, 1),
-				FCONST.nModif(FCONST.F_LEMMA, 2),
+				FCONST.p(FCONST.F_LEMMA, 1),
+				FCONST.p(FCONST.F_LEMMA, 2),
+				FCONST.n(FCONST.F_LEMMA, 1),
+				FCONST.n(FCONST.F_LEMMA, 2),
 				
-				FCONST.pModif(FCONST.F_SUFFIX, 1),
-				FCONST.nModif(FCONST.F_SUFFIX, 1),
+				FCONST.p(FCONST.F_SUFFIX, 1),
+				FCONST.n(FCONST.F_SUFFIX, 1),
 				
-				FCONST.pModif(FCONST.F_PREFIX, 1),
-				FCONST.pModif(FCONST.F_PREFIX, 2),
+				FCONST.p(FCONST.F_PREFIX, 1),
+				FCONST.p(FCONST.F_PREFIX, 2),
 				
 		};
 		String fhd = "-fhd-";

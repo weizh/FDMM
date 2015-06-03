@@ -1,21 +1,14 @@
 package edu.cmu.lti.weizh.mlmodel;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 
 import edu.cmu.lti.weizh.feature.FCONST;
 import edu.cmu.lti.weizh.feature.Feature;
 import edu.cmu.lti.weizh.feature.Theta;
-import gnu.trove.iterator.TIntObjectIterator;
-import gnu.trove.map.hash.TIntIntHashMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.map.hash.TObjectIntHashMap;
 
 /**
  * FDMM model
@@ -33,204 +26,195 @@ public class PerceptronFDMM extends MLModel<String> {
 	String modelname;
 
 	private static final long serialVersionUID = 1L;
-
 	/*
-	 * Store dictionary. String to Id (int) map. Dic also includes Feature
-	 * values for each token. and phi type id. entity type id.
+	 * Store the Distribution of each entity over labels.
 	 */
-	TObjectIntHashMap<String> DID;
-	TObjectIntHashMap<String> FID;
-	TObjectIntHashMap<String> LID;
+	// to store current value for theta.
+	HashMap<String, double[]> Thetas = new HashMap<String, double[]>();
+	// to store sum of thetas.
+	HashMap<String, double[]> ThetaSum = new HashMap<String, double[]>();
 
-	int did, fid, lid;
-	public final static String TOTAL = "[ROW_TOTAL]";
-	TIntObjectHashMap<String> LID2LString;
-	/*
-	 * Store the Distribution of each entity over labels. <EntityID <LabelID,
-	 * FREQ>>
-	 */
-	TIntObjectHashMap<TIntIntHashMap> theta;
-	TIntObjectHashMap<TIntIntHashMap> thetaSum;
-	/*
-	 * Define the feature distribution over <phi_iID:<labelID<dicID,Freq>>> Here
-	 * we use a specific String for denoting the sum. This string should be:
-	 * [PHI_I_SUM]. The put of this string is in first time filling out the
-	 * value.
-	 */
-	TIntObjectHashMap<TIntObjectHashMap<TIntIntHashMap>> phis;
-	TIntObjectHashMap<TIntObjectHashMap<TIntIntHashMap>> phisSum;
+	// to store current value for phis.
+	// Map<FeatureName, Map<FeatureValue, Double[] labelVals>>.
+	HashMap<String, HashMap<String, double[]>> Phis = new HashMap<String, HashMap<String, double[]>>();
+	// to store sum of phis.
+	HashMap<String, HashMap<String, double[]>> PhiSum = new HashMap<String, HashMap<String, double[]>>();
 
-	
-	double alpha, beta, gamma;
-	
+	// to store current value of transitions. Initialized when label size is
+	// get.
+	double[][][] Transition;
+	// to store sum of transitions.Initialized when label size is get.
+	double[][][] TransitionSum;
+
+	private HashSet<String> labelSet;
+	private HashMap<String, Integer> labelIndex;
+
+	double denom;
+
+	private HashMap<Integer, String> id2Label;
+
 	public PerceptronFDMM() {
-		this.DID = new TObjectIntHashMap<String>();
-		this.FID = new TObjectIntHashMap<String>();
-		this.LID = new TObjectIntHashMap<String>();
-		this.LID2LString = new TIntObjectHashMap<String>();
-		did = fid = lid = 0;
-		DID.put(TOTAL, did++);// dummy variable for storing the sum.
-		LID.put(TOTAL, lid++);
 
-		this.theta = new TIntObjectHashMap<TIntIntHashMap>();
-		this.phis = new TIntObjectHashMap<TIntObjectHashMap<TIntIntHashMap>>();
-		
-		setParam(1E-4, 1E-5,1E-5);
 	}
 
-	// total is added to feature distribution in <INTINThashMap> of
-	// phi[feature][label],
-	// and to <INTINTHashMap> for theta[word].
-	public void add(String word, String label, String featureName, String featureValue) {
+	public void perceptronLearn(String[] predictions, String[] goldLabels, List<Theta<String>> thetas,
+			List<List<Feature<String>>> features) {
 
-		if (!DID.containsKey(word))
-			DID.put(word, did++);
+		for (int i = 0; i < goldLabels.length; i++) {
+			modifyTheta(thetas.get(i), predictions[i], goldLabels[i]);
+			modifyFeature(features.get(i), predictions[i], goldLabels[i]);
+		}
+		modifyTrans(goldLabels,predictions );
+		updateThetaEOL();
+		updateFeatureEOL();
+		updateTransSumAtEndOfLoop();
+	}
 
-		if (!LID.containsKey(label)) {
-			LID.put(label, lid);
-			LID2LString.put(lid++, label);
+	// ****************************************** Transition.
+	private void modifyTrans(String[] goldTrans, String[] predTrans) {
+		String p = FCONST.SENTSTART;
+		String n = FCONST.SENTEND;
+		if (goldTrans.length == 0)
+			return;
+		if (goldTrans.length > 0) {
+			addOrAdjustTrans(p, p, goldTrans[0], 1);
+			addOrAdjustTrans(p, p, predTrans[0], -1);
+		}
+		if (goldTrans.length > 1) {
+			addOrAdjustTrans(p, goldTrans[0], goldTrans[1], 1);
+			addOrAdjustTrans(p, predTrans[0], predTrans[1], -1);
 		}
 
-		if (!FID.containsKey(featureName))
-			FID.put(featureName, fid++);
-
-		/**
-		 * Strong conversion from featureType to String to enable DID to store
-		 * the feature.
-		 */
-		if (!DID.containsKey(featureValue))
-			DID.put((String) featureValue, did++);
-
-		int c = DID.get(word);
-		int etype = LID.get(label);
-		int fheader = FID.get(featureName);
-		int fval = DID.get(featureValue);
-
-		int tot = DID.get(TOTAL);
-
-		// fill out theta
-		if (theta.containsKey(c)) {
-			TIntIntHashMap dDistribution = theta.get(c);
-
-			// increment total number.
-			dDistribution.increment(tot);
-			dDistribution.adjustOrPutValue(etype, 1, 1);
-
-		} else {
-			TIntIntHashMap dDistribution = new TIntIntHashMap();
-			dDistribution.put(etype, 1);
-			dDistribution.put(tot, 1);
-			theta.put(c, dDistribution);
+		for (int i = 2; i < goldTrans.length; i++) {
+			addOrAdjustTrans(goldTrans[i - 2], goldTrans[i - 1], goldTrans[i], 1);
+			addOrAdjustTrans(predTrans[i - 2], predTrans[i - 1], predTrans[i], -1);
 		}
 
-		// fill out the feature
-		if (phis.containsKey(fheader)) {
-			TIntObjectHashMap<TIntIntHashMap> phi_i = phis.get(fheader);
+		int i = goldTrans.length;
+		if (i == 1) {
+			addOrAdjustTrans(p, goldTrans[i - 1], n, 1);
+			addOrAdjustTrans(p, predTrans[i - 1], n, -1);
+			addOrAdjustTrans(goldTrans[i - 1], n, n, 1);
+			addOrAdjustTrans(predTrans[i - 1], n, n, -1);
+		} else { // case i>1, since i will never be 0.
+			addOrAdjustTrans(goldTrans[i - 2], goldTrans[i - 1], n, 1);
+			addOrAdjustTrans(predTrans[i - 2], predTrans[i - 1], n, -1);
+			addOrAdjustTrans(goldTrans[i - 1], n, n, 1);
+			addOrAdjustTrans(predTrans[i - 1], n, n, -1);
+		}
+	}
 
-			if (phi_i.containsKey(etype)) {
-				TIntIntHashMap wordDist = phi_i.get(etype);
+	private void addOrAdjustTrans(String p, String c, String n, int i) {
+		int pi = this.getTransLabelIndex(p);
+		int ci = this.getTransLabelIndex(c);
+		int ni = this.getTransLabelIndex(n);
+		Transition[pi][ci][ni] += i;
+	}
 
-				wordDist.adjustOrPutValue(fval, 1, 1);
-				wordDist.increment(tot);
+	int getTransLabelIndex(String s) {
+		if (s.equals(FCONST.SENTSTART))
+			return this.labelSet.size();
+		else if (s.equals(FCONST.SENTEND))
+			return this.labelSet.size() + 1;
+		else
+			return this.getLabelIndex(s);
+	}
 
+	private void updateTransSumAtEndOfLoop() {
+		int size = this.labelSet.size() + 2;
+		for (int i = 0; i < size; i++)
+			for (int j = 0; j < size; j++)
+				for (int k = 0; k < size; k++)
+					TransitionSum[i][j][k] += Transition[i][j][k];
+	}
+
+	// ****************************************** Feature.
+	void modifyFeature(List<Feature<String>> list, String predlabel, String goldlabel) {
+		for (Feature<String> f : list) {
+			addOrAdjustSingleFeatureValue(f, goldlabel, 1);
+			addOrAdjustSingleFeatureValue(f, predlabel, -1);
+		}
+	}
+
+	void addOrAdjustSingleFeatureValue(Feature<String> f, String label, int i) {
+		String fname = f.getName();
+		String fval = f.getValue();
+		if (Phis.containsKey(fname) == false)
+			Phis.put(fname, new HashMap<String, double[]>());
+		HashMap<String, double[]> phi = Phis.get(fname);
+		if (phi.containsKey(fval) == false)
+			phi.put(fval, this.getNewEmptyLabelArray());
+		double[] fvals = phi.get(fval);
+		fvals[this.getLabelIndex(label)] += i;
+	}
+
+	void updateFeatureEOL() {
+		for (Entry<String, HashMap<String, double[]>> en : Phis.entrySet()) {
+			String sname = en.getKey();
+			HashMap<String, double[]> sdist = en.getValue();
+			if (PhiSum.containsKey(sname) == false)
+				PhiSum.put(sname, new HashMap<String, double[]>());
+			HashMap<String, double[]> ddist = PhiSum.get(sname);
+			for (Entry<String, double[]> nn : sdist.entrySet()) {
+				String ssval = nn.getKey();
+				double[] ssdist = nn.getValue();
+				if (ddist.containsKey(ssval) == false) {
+					double[] dist = new double[ssdist.length];
+					System.arraycopy(ssdist, 0, dist, 0, ssdist.length);
+					ddist.put(ssval, dist);
+				} else {
+					double[] dddist = ddist.get(ssval);
+					for (int i = 0; i < ssdist.length; i++) {
+						dddist[i] += ssdist[i];
+					}
+				}
+			}
+		}
+	}
+
+	// ****************************************** Theta.
+	void modifyTheta(Theta<String> t, String predlabel, String goldlabel) {
+		List<String> values = t.getValue();
+		for (int i = 0; i < values.size(); i++) {
+			addOrAdjustSingleThetaValue(values.get(i), goldlabel, 1);
+			addOrAdjustSingleThetaValue(values.get(i), predlabel, -1);
+		}
+	}
+
+	void addOrAdjustSingleThetaValue(String name, String label, double i) {
+		if (Thetas.get(name) == null) {
+			Thetas.put(name, this.getNewEmptyLabelArray());
+		}
+		double[] labelDist = Thetas.get(name);
+		labelDist[getLabelIndex(label)] += i;
+	}
+
+	void updateThetaEOL() {
+		for (Entry<String, double[]> e : Thetas.entrySet()) {
+			String name = e.getKey();
+			double[] labels = e.getValue();
+			if (ThetaSum.containsKey(name) == false) {
+				double[] dist = new double[labels.length];
+				System.arraycopy(labels, 0, dist, 0, labels.length);
+				ThetaSum.put(name, dist);
 			} else {
-				TIntIntHashMap wordDist = new TIntIntHashMap();
-				wordDist.put(tot, 1);
-				wordDist.put(fval, 1);
-				phi_i.put(etype, wordDist);
+				double[] dist = ThetaSum.get(name);
+				for (int i = 0; i < dist.length; i++)
+					dist[i] += labels[i];
 			}
-		} else {
-			TIntIntHashMap wordDist = new TIntIntHashMap();
-			wordDist.put(tot, 1);
-			wordDist.put(fval, 1);
-			TIntObjectHashMap<TIntIntHashMap> phi_i = new TIntObjectHashMap<TIntIntHashMap>();
-			phi_i.put(etype, wordDist);
-			phis.put(fheader, phi_i);
 		}
 	}
 
-	public void add(String word, String label, Feature<String> feat) {
-		if (feat==null || word==null || label==null || feat.getName()==null || feat.getValue()==null) return;
-		add(word, label, feat.getName(), feat.getValue());
-	}
-
-	public void add(Theta<String> theta, String label, Feature<String> f) {
-		if(theta==null) return;
-		List<String> v = theta.getValue();
-		for (String val : v) {
-			add(val, label, f);
-		}
-	}
-
-	public void add(Theta<String> theta, String label, List<Feature<String>> features) {
-		if(features==null) return;
-		for (Feature<String> f: features){
-			add(theta,label,f);
-		}
-	}
-
-	public static void main(String args[]) throws IOException, ClassNotFoundException {
-		PerceptronFDMM model = PerceptronFDMM.load("en.FDA_MLModel");
-
-		System.out.println();
-
-	}
-
-	public static PerceptronFDMM load(String file) throws IOException, ClassNotFoundException {
-		FileInputStream in = new FileInputStream(file);
-		ObjectInputStream ins = new ObjectInputStream(in);
-		PerceptronFDMM copy = (PerceptronFDMM) ins.readObject();
-		copy.modelname = file;
-		in.close();
-		ins.close();
-		return copy;
-	}
-
-	@Override
-	public void store(String file) throws IOException {
-		FileOutputStream fos = new FileOutputStream(file);
-		ObjectOutputStream out = new ObjectOutputStream(fos);
-		out.writeObject(this);
-		out.close();
-	}
-
-	/**
-	 * This is an interface to viterbiDecode() function using newly defined feature classes.
-	 * @param thetas
-	 * @param features
-	 * @param transitions
-	 * @param alpha
-	 * @param beta
-	 * @param gamma
-	 * @param b
-	 * @return
-	 * @throws Exception
-	 */
-	public String[] viterbiDecodeFeature(List<Theta<String>> thetas, List<List<Feature<String>>> features,
-			List<Feature<String>> transitions, double alpha, double beta, double gamma, boolean b) throws Exception {
-
-		ArrayList<String[]> _theta = new ArrayList<String[]>(thetas.size());
-		for (Theta<String> t : thetas){
-			_theta.add(t.getValue().toArray(new String[]{}));
-		}
+	public String[] predict(List<Theta<String>> thetas, List<List<Feature<String>>> features) throws Exception {
 		
-		ArrayList<String[]> _features = new ArrayList<String[]>(features.size());
-		for (List<Feature<String>> f : features){
-			String[] e=new String[f.size()*2];
-			int i = 0 ;
-			for (Feature<String> nv:f){
-				e[i++]=nv.getName();
-				e[i++] = nv.getValue();
-			}
-			_features.add(e);
-		}
-		
-		ArrayList<String[]> _transition = new ArrayList<String[]>(transitions.size());
-		for (Feature<String> t:transitions){
-			_transition.add(new String[]{t.getName(),t.getValue()});
-		}
-		
-		return viterbiDecode(_theta,_features,_transition,alpha,beta,gamma,b);
+			return viterbiDecode(thetas, features, false);
+	}
+
+	public String[] predictWithAverageParam(List<Theta<String>> thetas, List<List<Feature<String>>> features, double i)
+			throws Exception {
+		this.denom = i;
+		return viterbiDecode(thetas, features, true);
+
 	}
 
 	/**
@@ -248,196 +232,264 @@ public class PerceptronFDMM extends MLModel<String> {
 	 * @return
 	 * @throws Exception
 	 */
-	public String[] viterbiDecode(ArrayList<String[]> _theta, ArrayList<String[]> _features, ArrayList<String[]> _transition,
-			double alpha, double beta, double gamma, boolean advanced) throws Exception {
+	public String[] viterbiDecode(List<Theta<String>> thetas, List<List<Feature<String>>> features, boolean isAverage)
+			throws Exception {
+		if (thetas.size() == 0)
+			throw new UnsupportedOperationException("Zero Length sentence. No need to viterbiDecode.");
+		int size = labelSet.size();
+		double[][] valueGrid = new double[thetas.size()][size * size];
+		int[][] backtrackGrid = new int[thetas.size()][size * size];
 
-		double logProb[][] = new double[_theta.size()][LID2LString.size() + 1];//
-		int backtrack[][] = new int[_theta.size()][LID2LString.size() + 1];//
-		for (int i = 0; i < logProb.length; i++)
-			for (int j = 0; j < logProb[0].length; j++) {//
-				logProb[i][j] = Double.NEGATIVE_INFINITY;//
-				backtrack[i][j] = Integer.MIN_VALUE;//
-			}//
+		for (int i = 0; i < thetas.size(); i++)
+			for (int j = 0; j < size * size; j++) {
+				valueGrid[i][j] = Double.NaN;
+				backtrackGrid[i][j] = Integer.MIN_VALUE;
+			}
 
-		for (int wordi = 0; wordi < _theta.size(); wordi++) { // for every word
-																// in sentence
-			// get the label distribution of word i (backoff is used.)
-			TIntIntHashMap cLabelDist = null;
-			int tindex = 0;
-			while (cLabelDist == null)
-				cLabelDist = theta.get(DID.get(_theta.get(wordi)[tindex++]));
-			String[] featureValues = _features.get(wordi);
-			String[] transValues = _transition.get(wordi);
-			TIntObjectIterator<String> citer = LID2LString.iterator();
-			while (citer.hasNext()) { // for every state of the current word
-				citer.advance();
-				int cLabelId = citer.key();
-				if (cLabelId == LID.get(FCONST.SENTSTART))
-					continue;
+		for (int i = 0; i < thetas.size(); i++) {
+			Theta<String> theta = thetas.get(i);
+			List<Feature<String>> feature = features.get(i);
+			addToGrid(i, thetas.size(), valueGrid, backtrackGrid, theta, feature, isAverage);
+		}
+		addToGrid(thetas.size(), thetas.size(), valueGrid, backtrackGrid, null, null, isAverage);
+		return bestSequence(valueGrid, backtrackGrid);
+	}
 
-				// 1 logP(c label | c word)
-				double probLabel = (cLabelDist.get(cLabelId) + alpha)
-						/ (cLabelDist.get(DID.get(TOTAL)) + alpha * (LID2LString.size() - 1));
-				double logProbLabel = Math.log(probLabel);
+	private String[] bestSequence(double[][] valueGrid, int[][] bg) {
+//		printGrids(valueGrid, bg);
+		int wLen = valueGrid.length;
+		String[] label = new String[wLen];
+		int[] labelIndex = new int[wLen];
+		for (int i = 0; i < labelIndex.length; i++)
+			labelIndex[i] = Integer.MIN_VALUE;
+		double maxFinalVal = Double.NEGATIVE_INFINITY;
+		int maxNodeId = Integer.MIN_VALUE;
+		for (int i = 0; i < valueGrid[0].length; i++) {
+			if (valueGrid[wLen - 1][i] > maxFinalVal) {
+				maxFinalVal = valueGrid[wLen - 1][i];
+				maxNodeId = i;
+			}
+		}
+		labelIndex[wLen - 1] = maxNodeId;
+		for (int i = wLen - 1; i > 0; i--) {
+			int bp = bg[i][labelIndex[i]];
+			labelIndex[i - 1] = bp;
+		}
+		label[0] = this.id2Label.get(labelIndex[0]);
+		for (int i = 1; i < labelIndex.length; i++) {
+			label[i] = this.id2Label.get(labelIndex[i] % this.labelSet.size());
+		}
+//		printLabels(labelIndex);
+		
+		return label;
+	}
 
-				// 2 logP( features | c label)
-				double logProbFeatures = 0;
-				for (int f = 0; f < featureValues.length; f += 2) {
-					String fname = featureValues[f];
-					String fval = featureValues[f + 1];
-					TIntObjectHashMap<TIntIntHashMap> phiDist = phis.get(FID.get(fname));
-					TIntIntHashMap phi4cLabel = phiDist.get(cLabelId);
-					double prob4F = (phi4cLabel.get(DID.get(fval)) + beta)
-							/ ((phi4cLabel.size() - 1) * beta + phi4cLabel.get(DID.get(TOTAL)));
-					logProbFeatures += Math.log(prob4F);
-				}
+	private void printLabels(int[] labelIndex) {
+		for (int i = 0 ; i < labelIndex.length;i++){
+			print(i+":"+labelIndex[i]+"\t");
+		}
+		println();
+	}
 
-				if (wordi == 0) {
-					// add the transition prob. from sentence start to state of
-					// current word
-					int featurename = FID.get(transValues[0]);
-					int prevState = LID.get(FCONST.SENTSTART);
-					int currentState = DID.get(citer.value());
-					TIntIntHashMap startphis = phis.get(featurename).get(prevState);
-					double transFromStart = (startphis.get(currentState) + gamma)
-							/ ((LID2LString.size() - 1) * gamma + startphis.get(DID.get(TOTAL)));
+	private void printGrids(double[][] valueGrid, int[][] bg) {
+		System.out.println(valueGrid.length);
+		System.out.println(valueGrid[0].length);
+		print("Values:	\n");
 
-					logProb[wordi][cLabelId] = logProbFeatures + (advanced ? logProbLabel : 0.0) + Math.log(transFromStart);
-					backtrack[wordi][cLabelId] = Integer.MIN_VALUE;
-					continue;
-				}
+		for (int i = 0; i < valueGrid.length; i++) {
+			print("word "+ i+"\n");
+			for (int j = 0; j < this.labelSet.size(); j++)
+				for (int k = 0; k < this.labelSet.size(); k++)
+				print(j+":"+k+":"+valueGrid[i][j*this.labelSet.size()+k] + "\t");
+		}
+		print("\n");
+//		println("BackTracker:");
+//		for (int i = 0; i < valueGrid.length; i++) {
+//			println("word "+ i);
+//			for (int j = 0; j < this.labelSet.size(); j++)
+//				for (int k = 0; k < this.labelSet.size(); k++)
+//				print(j+":"+k+":"+bg[i][j*this.labelSet.size()+k] + "\t");
+//		}
+		println();
+		
+	}
 
-				// 3 P(trans) * P( Accumulate of prev)
-				double maxLogProb = Double.NEGATIVE_INFINITY;
-				int maxPrevLabel = -1;
-
-				TIntObjectIterator<String> piter = LID2LString.iterator();
-				while (piter.hasNext()) { // for every previous word
-					piter.advance();
-					int pLabelId = piter.key();
-					if (pLabelId == LID.get(FCONST.SENTSTART))
+	private void addToGrid(int i, int size, double[][] vg, int[][] bg, Theta<String> theta, List<Feature<String>> feature,
+			boolean isAvg) {
+		int labelSize = this.labelSet.size();
+		int iStart = labelSize, iEnd = labelSize + 1;
+		// edge cases
+		if (i >= size) {
+			if (size == 1) {
+				for (int p = 0; p < labelSize; p++) {
+					if (vg[i - 1][p] == Double.NaN)
 						continue;
-					// previous slot logProb + P( cLabel | pLabel) indexed by
-					// feature type.
-					double prevAccumLogProb = logProb[wordi - 1][pLabelId];
-					// Transition probability. This only works for 1 previous
-					// state feature.
-					// Expanding to p2 state transition needs to create another
-					// loop within.
-					int featurename = FID.get(transValues[0]);
-					int currentState = DID.get(citer.value());
-					TIntIntHashMap fvalDist = phis.get(featurename).get(pLabelId);
-					double transProb = (fvalDist.get(currentState) + gamma)
-							/ (fvalDist.get(DID.get(TOTAL)) + gamma * (LID2LString.size() - 1));
-
-					double AccumLogProb = prevAccumLogProb + Math.log(transProb);
-
-					if (AccumLogProb > maxLogProb) {
-						maxLogProb = AccumLogProb;
-						maxPrevLabel = pLabelId;
+					vg[i - 1][p] += getTransitionValues(iStart, p, iEnd, isAvg) + getTransitionValues(p, iEnd, iEnd, isAvg);
+				}
+			} else {
+				for (int c = 0; c < labelSize; c++) {// current
+					double endVal = getTransitionValues(c, iEnd, iEnd, isAvg);
+					for (int p = 0; p < labelSize; p++) {// previous
+						vg[i - 1][p * labelSize + c] += getTransitionValues(p, c, iEnd, isAvg) + endVal;
 					}
 				}
-				if (maxPrevLabel == -1) {
-					throw new Exception("can not select a maximum candidate from previous words!");
-				} else {
-					logProb[wordi][cLabelId] = (advanced ? logProbLabel : 0) + logProbFeatures + maxLogProb;
-					backtrack[wordi][cLabelId] = maxPrevLabel;
+			}
+			return;
+		} else if (i == 0) {// elements in layer zero are at the top of list.
+							// previous node index is set to -1.
+			for (String l : this.labelSet) {
+				int c = this.getLabelIndex(l);
+				double emit = getThetaValues(theta, l, isAvg) + getFeatureValues(feature, l, isAvg);
+				double trans = getTransitionValues(labelSize, labelSize, c, isAvg);
+				double sum = emit + trans;
+				vg[0][c] = sum;
+				bg[0][c] = -1;
+			}
+			return;
+		}
+
+		// main cases ( 0< i < sentence size)
+		if (i == 1) {
+
+			int pp = labelSize;
+			// just process layer i=1 (#0 is the first layer).
+			for (String l : this.labelSet) { // current
+				double emit = getThetaValues(theta, l, isAvg) + getFeatureValues(feature, l, isAvg);
+				int c = this.getLabelIndex(l);
+				for (int p = 0; p < labelSize; p++) {
+					double acc = vg[0][p];
+					vg[1][p * labelSize + c] = acc + emit + getTransitionValues(pp, p, c, isAvg);
+					bg[1][p * labelSize + c] = p;
 				}
-			}// end of c states
-		}// end of words
+			}
+		} else { // size
+			for (String l : this.labelSet) {
+				double emit = getThetaValues(theta, l, isAvg) + getFeatureValues(feature, l, isAvg);
+				int c = this.getLabelIndex(l);
+				for (int p = 0; p < labelSize; p++) {
+					int ci = p * labelSize + c;
+					for (int pp = 0; pp < labelSize; pp++) {
+						int pi = pp * labelSize + p;
+						double acc = vg[i - 1][pi];
+						double trans = getTransitionValues(pp, p, c, isAvg);
+						double sum = emit + acc + trans;
+						if (Double.isNaN(vg[i][ci])) {
+							vg[i][ci] = sum;
+							bg[i][ci] = pi;
+						} else {
+							if (sum > vg[i][ci]) {
+								vg[i][ci] = sum;
+								bg[i][ci] = pi;
+							}
+						}
+					
+					}
+				}
+			}
+//			printGrids(vg,bg);
+		}
+	}
 
-		// fill the transition probability from last word to sentence end.
-		// last column only adds a transition prob for the previous accumu
-		// probs.
+	private double getTransitionValues(int pp, int p, int c, boolean isAvg) {
+		if (isAvg)
+			return TransitionSum[pp][p][c] / this.denom;
+		return Transition[pp][p][c];
+	}
 
-		int maxPrevLabel = -1;
-		double maxAccumuPlusLastTrans = Double.NEGATIVE_INFINITY;
-		TIntObjectIterator<String> lastiter = LID2LString.iterator();
-		while (lastiter.hasNext()) { // for every previous word
-			lastiter.advance();
-			if (lastiter.key() == LID.get(FCONST.SENTSTART))
-				continue;
-			// prev accumulate log prob
-			double prevAccumProb = logProb[logProb.length - 1][lastiter.key()];
-			TIntIntHashMap transValDist = phis.get(FID.get(_transition.get(0)[0])).get(lastiter.key());
-			double trans2Last = (transValDist.get(DID.get(lastiter.value())) + gamma)
-					/ (transValDist.get(DID.get(TOTAL)) + gamma * (transValDist.size() - 1));
-			double logAccumPlusTrans = Math.log(trans2Last) + prevAccumProb;
-			if (logAccumPlusTrans > maxAccumuPlusLastTrans) {
-				maxAccumuPlusLastTrans = logAccumPlusTrans;
-				maxPrevLabel = lastiter.key();
+	private Double getFeatureValues(List<Feature<String>> feature, String label, boolean isAvg) {
+		if (feature == null)
+			return 0.0;
+		Double sum = 0.0;
+		if (isAvg) {
+			HashMap<String, HashMap<String, double[]>> phi = PhiSum;
+
+			for (Feature<String> f : feature) {
+				String fname = f.getName();
+				String fval = f.getValue();
+				if (phi.containsKey(fname) && phi.get(fname).containsKey(fval))
+					sum += phi.get(fname).get(fval)[this.getLabelIndex(label)]/this.denom;
+			}
+		}else {
+			HashMap<String, HashMap<String, double[]>> phi = Phis;
+			for (Feature<String> f : feature) {
+				String fname = f.getName();
+				String fval = f.getValue();
+				if (phi.containsKey(fname) && phi.get(fname).containsKey(fval))
+					sum += phi.get(fname).get(fval)[this.getLabelIndex(label)];
 			}
 		}
-		// print(logProb,backtrack);
-		return bestSequence(backtrack, maxPrevLabel);
+		return sum;
 	}
 
-	// elonged logProb and backtrack matrix. Last column is the best choice and
-	// best probability.
-	private String[] bestSequence(int[][] backtrack, int maxlabel) {
-
-		int[] backpath = new int[backtrack.length];
-		backpath[backtrack.length - 1] = maxlabel;
-
-		for (int i = backtrack.length - 1; i > 0; i--) {
-			// System.out.println(i);
-			backpath[i - 1] = backtrack[i][maxlabel];
-			maxlabel = backpath[i - 1];
-		}
-
-		String[] finalLabels = new String[backtrack.length];
-		for (int i = 0; i < backtrack.length; i++) {
-			finalLabels[i] = LID2LString.get(backpath[i]);
-		}
-		return finalLabels;
-	}
-
-	public void perceptronLearn(List<String> predictions, List<String> goldLabels, List<Theta<String>> thetas,
-			List<List<Feature<String>>> features, List<String[]> goldTrans) {
-		HashMap<String, Integer> rightFeatures = new HashMap<String, Integer>();
-		HashMap<String, Integer> wrongFeatures = new HashMap<String, Integer>();
-		
-		for (int i = 0 ; i < goldLabels.size(); i++){
-			
-		}
-	}
-
-	public void setParam(double alpha, double beta, double gamma) {
-		this.alpha = alpha;
-		this.beta = beta;
-		this.gamma = gamma;	
-	}
-	private void print(double[][] logProb, int[][] backtrack) {
-		for (int i = 0; i < logProb.length; i++) {
-			for (int j = 0; j < logProb[0].length; j++) {
-				System.out.print(logProb[i][j] + "\t");
+	private double getThetaValues(Theta<String> theta, String label, boolean isAverage) {
+		double sum = 0;
+		if (isAverage) {
+			HashMap<String, double[]> target = this.ThetaSum;
+			for (int i = 0; i < Theta.getTHETA_HEADERS().length; i++) {
+				if (target.containsKey(theta.getValue().get(i)))
+					sum += target.get(theta.getValue().get(i))[this.getLabelIndex(label)] / this.denom;
 			}
-			System.out.println();
-		}
-
-		for (int i = 0; i < backtrack.length; i++) {
-			for (int j = 0; j < backtrack[0].length; j++) {
-				System.out.print(backtrack[i][j] + "\t");
+		} else {
+			HashMap<String, double[]> target = this.Thetas;
+			for (int i = 0; i < Theta.getTHETA_HEADERS().length; i++) {
+				if (target.containsKey(theta.getValue().get(i)))
+					sum += target.get(theta.getValue().get(i))[this.getLabelIndex(label)];
 			}
-			System.out.println();
 		}
-
-	}
-	public void printParams() {
-		System.out.println("DID");
-		System.out.println(DID);
-		System.out.println("LID");
-		System.out.println(LID);
-		System.out.println("FID");
-		System.out.println(FID);
-		System.out.println("THETA");
-		System.out.println(theta);
-		System.out.println("PHI");
-		System.out.println(phis);
+		return sum;
 	}
 
-	public List<String> predict(List<Theta<String>> thetas, List<List<Feature<String>>> features) {
-		
-		return null;
+	// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public void store(String file) throws IOException {
+
+	}
+
+	private void print(Object key) {
+		System.out.print(key);
+	}
+	private void println(){
+		System.out.println();
+	}
+	private void println(String s){
+		System.out.println(s);
+	}
+
+	/**
+	 * Set labelset, labelindex, and transition matrix as well.
+	 * 
+	 * @param labelSet
+	 */
+	public void setLabelSet(HashSet<String> labelSet) {
+		this.labelSet = labelSet;
+		this.labelIndex = new HashMap<String, Integer>(labelSet.size());
+		this.id2Label = new HashMap<Integer, String>(labelSet.size());
+		int i = 0;
+		for (String s : labelSet) {
+			id2Label.put(i, s);
+			labelIndex.put(s, i++);
+		}
+		int s = labelSet.size() + 2;
+		this.Transition = new double[s][s][s];
+		this.TransitionSum = new double[s][s][s];
+		for (int j = 0; j < s; j++)
+			for (int k = 0; k < s; k++)
+				for (int l = 0; l < s; l++) {
+					Transition[j][k][l] = 0.0d;
+					TransitionSum[j][k][l] = 0.0d;
+				}
+
+	}
+
+	int getLabelIndex(String s) {
+		return labelIndex.get(s);
+	}
+
+	double[] getNewEmptyLabelArray() {
+		double[] d = new double[labelSet.size()];
+		for (int i = 0; i < d.length; i++)
+			d[i] = 0.0d;
+		return d;
 	}
 }

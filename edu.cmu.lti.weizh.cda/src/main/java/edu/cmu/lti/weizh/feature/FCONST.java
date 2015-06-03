@@ -35,11 +35,11 @@ public class FCONST {
 	
 	public static final String DUMMY="HT_DUMMY";
 
-	public static String pModif(String ftype, int p) {
+	public static String p(String ftype, int p) {
 		return ftype +"@P"+p;
 	}
 
-	public static String nModif(String ftype, int n) {
+	public static String n(String ftype, int n) {
 		return ftype+"@N"+n;
 	}
 	

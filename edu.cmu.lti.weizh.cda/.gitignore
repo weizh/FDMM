@@ -8,3 +8,7 @@
 /10-randomSent-CVfolds-OCT25.txt
 /outputCOnsole
 /POS-rich-randomSent-fold10.0-NOV08.en.FDA_MLModel
+/CONLL2kFDMMPerceptron-10.trainer
+/CONLL2kFDMMPerceptron-2.trainer
+/CONLL2kFDMMPerceptron-50.trainer
+/NLPBAFDMMTrainer
