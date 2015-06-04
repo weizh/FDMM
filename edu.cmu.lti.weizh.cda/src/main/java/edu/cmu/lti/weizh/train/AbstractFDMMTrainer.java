@@ -2,12 +2,19 @@ package edu.cmu.lti.weizh.train;
 
 
 
+import edu.cmu.lti.weizh.docmodel.AbstractDataSet;
 import edu.cmu.lti.weizh.feature.Feature;
 import edu.cmu.lti.weizh.feature.Theta;
 import edu.cmu.lti.weizh.io.Storable;
 import edu.cmu.lti.weizh.mlmodel.FDMM;
 
-public abstract class AbstractFDMMTrainer<FVTYPE,T,D> extends Storable<T> implements Trainable<FDMM, D>  {
+public abstract class AbstractFDMMTrainer<
+FVTYPE,
+T extends Trainable<FDMM,D>,
+D extends AbstractDataSet
+> 
+extends Storable<T> 
+implements Trainable<FDMM, D>  {
 
 	/**
 	 * 

@@ -18,7 +18,6 @@ public abstract class AbstractDataSet {
 	protected List<Document> documents;
 	
 	public List<Document> getDocuments() {
-		// TODO Auto-generated method stub
 		return this.documents;
 	}
 	

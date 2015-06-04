@@ -30,7 +30,7 @@ public class OntoNotesDataFiller extends AbstractDataSetFiller {
 		OntonotesDataSet fdad = new OntonotesDataSet(19999, EVAL_CONSTS.NER_TYPE);
 		String path = "C:/Users/Wynn/Documents/wynnzh/data/LDC/data/english/annotations";
 		try {
-			new OntoNotesDataFiller(fdad).fill(new File(path));
+			new OntoNotesDataFiller(fdad).fill(new File(path),false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -40,15 +40,17 @@ public class OntoNotesDataFiller extends AbstractDataSetFiller {
 	 * Fill in the named entity in each sentence to get the gold standard of
 	 * NEs. This is different from the default method where the word feature is
 	 * used as gold standard.
+	 * Each file is a document. One document only contain one paragraph.
+	 * @param collapseTag 
 	 */
-	public void fill(File node) throws Exception {
+	public void fill(File node, boolean collapseTag) throws Exception {
 
 		// System.out.println(node.getAbsoluteFile());
 
 		if (node.isDirectory()) {
 			String[] subNote = node.list();
 			for (String filename : subNote) {
-				fill(new File(node, filename));
+				fill(new File(node, filename),collapseTag);
 			}
 		} else {
 			if (node.isFile() && node.getAbsolutePath().endsWith(".onf")) {
@@ -67,12 +69,12 @@ public class OntoNotesDataFiller extends AbstractDataSetFiller {
 
 					List<Word> words = sent.getWords();
 					for (Word word : words) {
-						word.setEntityType("[O]");
+						word.setEntityType("O");
 					}
 
 					for (NamedEntity ne : sent.getNamedEntities()) {
 						for (int i = ne.getStart(); i <= ne.getEnd(); i++) {
-							words.get(i).setEntityType(ne.getEntityType());
+							words.get(i).setEntityType(collapseTag?getCollapsed(ne.getEntityType()):ne.getEntityType());
 						}
 					}
 				}
@@ -80,6 +82,17 @@ public class OntoNotesDataFiller extends AbstractDataSetFiller {
 				fdad.getDocuments().add(d);
 				onfr.close();
 			}
+		}
+	}
+
+	private String getCollapsed(String entityType) {
+		switch(entityType){
+		case "GPE": 
+		case "PERSON":
+		case "ORG":
+			return entityType;
+		default:
+			return "MISC";
 		}
 	}
 

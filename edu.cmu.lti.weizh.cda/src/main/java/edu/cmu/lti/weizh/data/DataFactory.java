@@ -1,10 +1,15 @@
 package edu.cmu.lti.weizh.data;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 import edu.cmu.lti.weizh.data.conll2000.CONLL2kReader;
+import edu.cmu.lti.weizh.data.conll2002.CONLL02Reader;
 import edu.cmu.lti.weizh.data.nlpba.NLPBAReader;
+import edu.cmu.lti.weizh.data.ontonotes.OntoNotesDataFiller;
+import edu.cmu.lti.weizh.data.ontonotes.OntonotesDataSet;
 import edu.cmu.lti.weizh.eval.EVAL_CONSTS;
 
 public class DataFactory {
@@ -17,10 +22,8 @@ public class DataFactory {
 
 			new CONLLFormatDataFiller(data, c2kreader).fill();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return data;
@@ -34,10 +37,8 @@ public class DataFactory {
 
 			new CONLLFormatDataFiller(data, c2kreader).fill();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return data;
@@ -45,16 +46,14 @@ public class DataFactory {
 
 	public static CONLLFormatDataSet getCONLL02NEDTrain() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
-		CONLL2kReader c2kreader;
+		CONLL02Reader c02reader;
 		try {
-			c2kreader = new CONLL2kReader((new FileReader(DATA_PATHS.CONLL02GERMENYTrain)));
+			c02reader = new CONLL02Reader((new FileReader(DATA_PATHS.CONLL02GERMENYTrain)));
 
-			new CONLLFormatDataFiller(data, c2kreader).fill();
+			new CONLLFormatDataFiller(data, c02reader).fill();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return data;
@@ -63,16 +62,14 @@ public class DataFactory {
 
 	public static CONLLFormatDataSet getCONLL02NEDTestA() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
-		CONLL2kReader c2kreader;
+		CONLL02Reader c02reader;
 		try {
-			c2kreader = new CONLL2kReader((new FileReader(DATA_PATHS.CONLL02GERMENYTestA)));
+			c02reader = new CONLL02Reader((new FileReader(DATA_PATHS.CONLL02GERMENYTestA)));
 
-			new CONLLFormatDataFiller(data, c2kreader).fill();
+			new CONLLFormatDataFiller(data, c02reader).fill();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return data;
@@ -81,16 +78,14 @@ public class DataFactory {
 
 	public static CONLLFormatDataSet getCONLL02NEDTestB() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
-		CONLL2kReader c2kreader;
+		CONLL02Reader c02reader;
 		try {
-			c2kreader = new CONLL2kReader((new FileReader(DATA_PATHS.CONLL02GERMENYTestB)));
+			c02reader = new CONLL02Reader((new FileReader(DATA_PATHS.CONLL02GERMENYTestB)));
 
-			new CONLLFormatDataFiller(data, c2kreader).fill();
+			new CONLLFormatDataFiller(data, c02reader).fill();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return data;
@@ -99,16 +94,14 @@ public class DataFactory {
 
 	public static CONLLFormatDataSet getCONLL02EspTrain() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
-		CONLL2kReader c2kreader;
+		CONLL02Reader c02reader;
 		try {
-			c2kreader = new CONLL2kReader((new FileReader(DATA_PATHS.CONLL02SPANISHTrain)));
+			c02reader = new CONLL02Reader((new FileReader(DATA_PATHS.CONLL02SPANISHTrain)));
 
-			new CONLLFormatDataFiller(data, c2kreader).fill();
+			new CONLLFormatDataFiller(data, c02reader).fill();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return data;
@@ -117,16 +110,14 @@ public class DataFactory {
 
 	public static CONLLFormatDataSet getCONLL02EspTestA() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
-		CONLL2kReader c2kreader;
+		CONLL02Reader c02reader;
 		try {
-			c2kreader = new CONLL2kReader((new FileReader(DATA_PATHS.CONLL02SPANISHTestA)));
+			c02reader = new CONLL02Reader((new FileReader(DATA_PATHS.CONLL02SPANISHTestA)));
 
-			new CONLLFormatDataFiller(data, c2kreader).fill();
+			new CONLLFormatDataFiller(data, c02reader).fill();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return data;
@@ -136,16 +127,14 @@ public class DataFactory {
 
 	public static CONLLFormatDataSet getCONLL02EspTestB() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
-		CONLL2kReader c2kreader;
+		CONLL02Reader c02reader;
 		try {
-			c2kreader = new CONLL2kReader((new FileReader(DATA_PATHS.CONLL02SPANISHTestB)));
+			c02reader = new CONLL02Reader((new FileReader(DATA_PATHS.CONLL02SPANISHTestB)));
 
-			new CONLLFormatDataFiller(data, c2kreader).fill();
+			new CONLLFormatDataFiller(data, c02reader).fill();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return data;
@@ -161,10 +150,8 @@ public class DataFactory {
 
 			new CONLLFormatDataFiller(data, nlpbareader).fill();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return data;
@@ -174,16 +161,14 @@ public class DataFactory {
 
 	public static CONLLFormatDataSet getNLPBASampleTest() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
-		NLPBAReader c2kreader;
+		NLPBAReader nlpbareader;
 		try {
-			c2kreader = new NLPBAReader((new FileReader(DATA_PATHS.NLPBASampleTest)));
+			nlpbareader = new NLPBAReader((new FileReader(DATA_PATHS.NLPBASampleTest)));
 
-			new CONLLFormatDataFiller(data, c2kreader).fill();
+			new CONLLFormatDataFiller(data, nlpbareader).fill();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return data;
@@ -192,21 +177,35 @@ public class DataFactory {
 
 	public static CONLLFormatDataSet getNLPBAEval() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
-		NLPBAReader c2kreader;
+		NLPBAReader nlpbareader;
 		try {
-			c2kreader = new NLPBAReader((new FileReader(DATA_PATHS.NLPBAEval)));
+			nlpbareader = new NLPBAReader((new FileReader(DATA_PATHS.NLPBAEval)));
 
-			new CONLLFormatDataFiller(data, c2kreader).fill();
+			new CONLLFormatDataFiller(data, nlpbareader).fill();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return data;
-
-
 	}
 
+	/**
+	 * For file path, see DATA_PATHS.XXX.
+	 * @param filePath
+	 * @param collapseTag 
+	 * @return
+	 */
+	public static OntonotesDataSet getONFDataSet(String filePath, boolean collapseTag) {
+		System.err.println("Loading" + filePath);
+		OntonotesDataSet fdad = new OntonotesDataSet(19999, EVAL_CONSTS.NER_TYPE);
+		try {
+			new OntoNotesDataFiller(fdad).fill(new File(filePath),collapseTag);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.err.println( filePath + "loaded.");
+
+		return fdad;
+	}
 }
