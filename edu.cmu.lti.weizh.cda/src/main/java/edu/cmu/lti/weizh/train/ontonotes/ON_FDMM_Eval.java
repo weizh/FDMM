@@ -15,7 +15,7 @@ import edu.cmu.lti.weizh.mlmodel.FDMM;
 import edu.cmu.lti.weizh.nlp.Stemmer;
 import edu.cmu.lti.weizh.train.Evaluatable;
 
-public class _TODO_ON_FDMM_Eval implements Evaluatable<FDMM, OntonotesDataSet> {
+public class ON_FDMM_Eval implements Evaluatable< OntonotesDataSet> {
 
 	public static void main(String arv[]) throws Exception {
 
@@ -32,7 +32,7 @@ public class _TODO_ON_FDMM_Eval implements Evaluatable<FDMM, OntonotesDataSet> {
 		OntonotesDataSet dataset = new OntonotesDataSet(300000, type);
 		
 		System.out.println("loading data:");
-		new OntoNotesDataFiller(dataset).fill(new File(path));
+		new OntoNotesDataFiller(dataset).fill(new File(path),false);
 		dataset.fillCVFolds(cvfile);
 		/*
 		 * load models : alltok-folds: word level NER SETN-alltok: sentence
@@ -40,7 +40,7 @@ public class _TODO_ON_FDMM_Eval implements Evaluatable<FDMM, OntonotesDataSet> {
 		 * level POS.
 		 */
 		if (type.equals(EVAL_CONSTS.NER_TYPE)) {
-			new _TODO_ON_FDMM_Eval().infer(mode, TbT, FDMM.load("NER10-rich-randomSent-fold10.0-NOV08.en.FDA_MLModel"),
+			new ON_FDMM_Eval().infer(mode, TbT, FDMM.load("NER10-rich-randomSent-fold10.0-NOV08.en.FDA_MLModel"),
 					dataset, foldId);
 			dataset.printTokenByTokenEvaluation(foldId);
 			//
@@ -50,7 +50,7 @@ public class _TODO_ON_FDMM_Eval implements Evaluatable<FDMM, OntonotesDataSet> {
 
 		} else if (type.equals(EVAL_CONSTS.POS_TYPE)) {
 			FDMM model = FDMM.load("POS-rich-randomSent-fold10.0-OCT25.en.FDA_MLModel");
-			new _TODO_ON_FDMM_Eval().infer(mode, TbT, model, dataset, foldId);
+			new ON_FDMM_Eval().infer(mode, TbT, model, dataset, foldId);
 			dataset.printTokenByTokenEvaluation(foldId);
 		}
 

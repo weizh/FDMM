@@ -13,6 +13,7 @@ import edu.cmu.lti.weizh.feature.Theta;
 import edu.cmu.lti.weizh.mlmodel.FDMM;
 import edu.cmu.lti.weizh.train.AbstractFDMMTrainer;
 
+@Deprecated
 public class C2K_FDMM_Train extends AbstractFDMMTrainer<String, C2K_FDMM_Train, CONLLFormatDataSet> {
 
 	/**

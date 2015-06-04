@@ -5,9 +5,9 @@ package edu.cmu.lti.weizh.train.conll2k;
 import edu.cmu.lti.weizh.data.CONLLFormatDataSet;
 import edu.cmu.lti.weizh.data.DataFactory;
 import edu.cmu.lti.weizh.feature.FCONST;
-import edu.cmu.lti.weizh.train._TODO_AbstractFDMMEval;
-
-public class C2K_FDMMEval extends _TODO_AbstractFDMMEval<String, CONLLFormatDataSet,C2K_FDMM_Train> {
+import edu.cmu.lti.weizh.train.AbstractFDMMEval;
+@Deprecated
+public class C2K_FDMMEval extends AbstractFDMMEval<String, CONLLFormatDataSet,C2K_FDMM_Train> {
 
 	/**
 	 * This is for de-serialization convenience

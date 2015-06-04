@@ -17,18 +17,20 @@ import edu.cmu.lti.weizh.docmodel.Paragraph;
 import edu.cmu.lti.weizh.docmodel.Sentence;
 import edu.cmu.lti.weizh.docmodel.Word;
 import edu.cmu.lti.weizh.eval.EVAL_CONSTS;
+import edu.cmu.lti.weizh.feature.ONF_CONSTS;
 import edu.cmu.lti.weizh.mlmodel.FDMM;
 import edu.cmu.lti.weizh.nlp.Stemmer;
+import edu.cmu.lti.weizh.train.AbstractFDMMTrainer;
 import edu.cmu.lti.weizh.train.Trainable;
 import gnu.trove.iterator.TObjectIntIterator;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
-public class _TODO_ON_FDMM_Trainer implements AbstractFDMMTrainer {
+public class ON_FDMM_Trainer extends AbstractFDMMTrainer {
 	TObjectIntHashMap<String> posRules;
 
 	public static void main(String argv[]) throws Exception {
 
-		_TODO_ON_FDMM_Trainer fdatrainer = new _TODO_ON_FDMM_Trainer();
+		ON_FDMM_Trainer fdatrainer = new ON_FDMM_Trainer();
 
 
 		String mode = "NER";
@@ -38,7 +40,7 @@ public class _TODO_ON_FDMM_Trainer implements AbstractFDMMTrainer {
 		OntonotesDataSet fdad = new OntonotesDataSet(300000, mode.equals("NER")?EVAL_CONSTS.NER_TYPE:EVAL_CONSTS.POS_TYPE );
 		String path = "/home/wei/Documents/annotations";
 		
-		new OntoNotesDataFiller(fdad).fill(new File(path));
+		new OntoNotesDataFiller(fdad).fill(new File(path),false);
 		
 		String foldFile =  "10-randomSent-CVfolds-OCT25.txt";
 		String modelFile = mode+"10-rich-randomSent-fold10.";
@@ -97,7 +99,7 @@ public class _TODO_ON_FDMM_Trainer implements AbstractFDMMTrainer {
 		bw.close();
 	}
 @Deprecated
-	_TODO_ON_FDMM_Trainer() {
+	ON_FDMM_Trainer() {
 		this.posRules = new TObjectIntHashMap<String>();
 	}
 
@@ -501,19 +503,14 @@ public class _TODO_ON_FDMM_Trainer implements AbstractFDMMTrainer {
 		}
 		return fdamodel;
 	}
+	@Override
+	public void train(Object d) throws Exception {
+		
+	}
+	@Override
+	protected Object self() {
+		return this;
+	}
 
-	@Override
-	public void train(OntonotesDataSet d) throws Exception {
-		// TODO Auto-generated method stub
-	}
-	@Override
-	public String[] getFeatureHeaders() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public FDMM getModel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 }
