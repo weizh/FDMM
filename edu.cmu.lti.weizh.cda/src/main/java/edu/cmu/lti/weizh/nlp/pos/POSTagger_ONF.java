@@ -78,6 +78,9 @@ public class POSTagger_ONF implements Tagger {
 	}
 
 	private List<Word> setPredictions(List<Word> words, Prediction[] predictions) {
+		for (int i = 0 ; i < words.size(); i++){
+			words.get(i).setPDist(predictions[i]);
+		}
 		return words;
 	}
 }

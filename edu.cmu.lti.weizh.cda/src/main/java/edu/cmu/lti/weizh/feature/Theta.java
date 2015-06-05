@@ -102,7 +102,7 @@ public class Theta<VALUETYPE> {
 		case FCONST.T_LEMMA:
 			return w.getTrimLowered();
 		case FCONST.T_CAP:
-			return w.getWordForm().startsWith("A")?"A":"a";
+			return w.isCapitalizedFirst();
 		case FCONST.T_WORDFORM:
 			return w.getWordForm();
 		case FCONST.T_PREFIX:

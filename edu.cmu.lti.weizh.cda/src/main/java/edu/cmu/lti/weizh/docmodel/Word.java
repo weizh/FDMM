@@ -32,7 +32,7 @@ public class Word implements Serializable {
 
 	private String chunkType;
 
-	Prediction p;
+	Prediction pDist;
 	
 	/**
 	 * Constructor with just word string.
@@ -81,32 +81,34 @@ public class Word implements Serializable {
 	}
 
 	public void setEntityType(String string) {
-		// TODO Auto-generated method stub
 		this.entityType = string;
 	}
 
 	public String getEntityType() {
-		// TODO Auto-generated method stub
 		return this.entityType;
 	}
 
 	public void setPrediction(String label) throws Exception {
-		// TODO Auto-generated method stub
 		this.predition = label;
 	}
 
 	public String getPrediction() {
-		// TODO Auto-generated method stub
 		return this.predition;
 	}
 
+	public void setPDist(Prediction prediction) {
+		this.pDist = prediction;
+	}
+
+	public Prediction getPDist() {
+		return this.pDist;
+	}
+	
 	public void setBooleanFolds(boolean[] rand) {
-		// TODO Auto-generated method stub
 		this.folds = rand;
 	}
 
 	public boolean[] getBooleanFolds() {
-		// TODO Auto-generated method stub
 		return this.folds;
 	}
 	
@@ -191,5 +193,6 @@ public class Word implements Serializable {
 		return word.substring(0, word.length() > i ? i : word.length());
 	}
 
+	
 
 }

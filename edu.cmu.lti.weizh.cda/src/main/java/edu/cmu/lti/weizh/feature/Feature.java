@@ -126,7 +126,7 @@ public class Feature<VALUETYPE> {
 		case FCONST.F_LEMMA:
 			return fh + w.getTrimLowered();
 		case FCONST.F_CAP:
-			return w.getWordForm().startsWith("A")?"A":"a";
+			return w.isCapitalizedFirst();
 		case FCONST.F_WORDFORM:
 			return fh + w.getWordForm();
 		case FCONST.F_PREFIX:

@@ -217,9 +217,90 @@ public class PerceptronFDMM extends MLModel<String> {
 		return viterbiDecode(thetas, features, true);
 	}
 
-	public Prediction[] predictWithAverageParamLabelDist(List<Theta<String>> thetas, List<List<Feature<String>>> features, double i){
-		return null;
+	public Prediction[] predictWithAverageParamLabelDist(List<Theta<String>> thetas, List<List<Feature<String>>> features, double denom){
+		this.denom=denom;
+		return fowardBackward(thetas,features);
 	}
+
+	private Prediction[] fowardBackward(List<Theta<String>> thetas, List<List<Feature<String>>> features) {
+		double[][] fTable = genForwardTable(thetas,features);
+		double[][] bTable = genBackwardTable(thetas,features);
+		
+		Prediction p[] = new Prediction[thetas.size()];
+		for (int i = 0 ; i < p.length ; i ++){
+			String[] names = new String[labelIndex.size()];
+			double[] vals = new double[labelIndex.size()];
+		
+			double sum = 0;
+			for (Entry<String, Integer> label : labelIndex.entrySet()){
+				String ls = label.getKey();
+				int li = label.getValue();
+				names[li] = ls;
+				double val = getHistSum(fTable,bTable,i,li);
+				vals[li]=val;
+				sum+=val;
+			}
+			for (int j=0; j< vals.length; j++)
+				vals[i] = vals[i]/sum;
+			p[i]= new Prediction(names,vals);
+		}
+		return p;
+	}
+	
+
+	private double getHistSum(double[][] fTable, double[][] bTable, int windex, int offset) {
+		double tempp =0;
+		for (int i = 0 ; i< labelIndex.size(); i++){
+			int index = i*labelIndex.size()+offset;
+			tempp+= Math.exp(fTable[windex][index]+bTable[windex][index]);
+		}
+		return 0;
+	}
+
+	private double[][] genBackwardTable(List<Theta<String>> thetas, List<List<Feature<String>>> features) {
+		int size = labelSet.size();
+		double[][] valueGrid = new double[thetas.size()][size * size];
+		for (int i = 0; i < thetas.size(); i++)
+			for (int j = 0; j < size * size; j++) {
+				valueGrid[i][j] = Double.NaN;
+			}
+		//TODO:
+		for (int i = 0; i < thetas.size(); i++) {
+			Theta<String> theta = thetas.get(i);
+			List<Feature<String>> feature = features.get(i);
+			beta(i, thetas.size(), valueGrid, theta, feature, true);
+		}
+		beta(thetas.size(), thetas.size(), valueGrid, null, null, true);
+		
+		return valueGrid;
+	}
+
+	private double[][] genForwardTable(List<Theta<String>> thetas, List<List<Feature<String>>> features) {
+		int size = labelSet.size();
+		double[][] valueGrid = new double[thetas.size()][size * size];
+		for (int i = 0; i < thetas.size(); i++)
+			for (int j = 0; j < size * size; j++) {
+				valueGrid[i][j] = Double.NaN;
+			}
+		//TODO:
+		for (int i = 0; i < thetas.size(); i++) {
+			Theta<String> theta = thetas.get(i);
+			List<Feature<String>> feature = features.get(i);
+			alpha(i, thetas.size(), valueGrid, theta, feature, true);
+		}
+		alpha(thetas.size(), thetas.size(), valueGrid, null, null, true);
+		return valueGrid;
+	}
+	
+	private void beta(int i, int size, double[][] valueGrid, Theta<String> theta, List<Feature<String>> feature, boolean isAvg) {
+		
+	}
+
+	private void alpha(int i, int size, double[][] valueGrid, Theta<String> theta, List<Feature<String>> feature, boolean isAvg) {
+		
+	}
+	
+
 	/**
 	 * 
 	 * @param _theta
