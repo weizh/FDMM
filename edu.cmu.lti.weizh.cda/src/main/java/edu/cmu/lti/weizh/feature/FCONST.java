@@ -22,6 +22,7 @@ public class FCONST {
 	public static final String F_WORDFORM = "FT_WORDFORM";
 	public static final String F_INT = "FT_INT";
 	public static final String F_DOUBLE = "FT_DOUBLE";
+	public static final String F_CAP = "FT_CAP";
 
 	public static final String T_WORD = "HT_WORD";
 	public static final String T_LEMMA = "HT_LEMMA";
@@ -34,6 +35,7 @@ public class FCONST {
 	public static final String T_CAP="HT_CAP";
 	
 	public static final String DUMMY="HT_DUMMY";
+
 
 	public static String p(String ftype, int p) {
 		return ftype +"@P"+p;

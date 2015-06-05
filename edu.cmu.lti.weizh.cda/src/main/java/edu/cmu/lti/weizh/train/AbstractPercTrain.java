@@ -147,8 +147,8 @@ implements Trainable<PerceptronFDMM, D> {
 					Word w = words.get(i);
 					Theta<String> theta = new Theta<String>(w);
 					thetas.add(theta);
-					List<Feature<String>> feats = new ArrayList<Feature<String>>(featureHeaders.length);
-					for (String fheader : featureHeaders)
+					List<Feature<String>> feats = new ArrayList<Feature<String>>(getFeatureHeaders().length);
+					for (String fheader : getFeatureHeaders())
 						feats.add(new Feature<String>(fheader, s, i));
 					features.add(feats);
 					goldLabels[i] = (getGoldLabel(w));

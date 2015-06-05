@@ -3,7 +3,6 @@ package edu.cmu.lti.weizh.data;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 
 import edu.cmu.lti.weizh.data.conll2000.CONLL2kReader;
 import edu.cmu.lti.weizh.data.conll2002.CONLL02Reader;
@@ -13,6 +12,7 @@ import edu.cmu.lti.weizh.data.ontonotes.OntonotesDataSet;
 import edu.cmu.lti.weizh.eval.EVAL_CONSTS;
 
 public class DataFactory {
+
 
 	public static CONLLFormatDataSet getCONLL2kTrain() {
 		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.CHUNK_TYPE);
@@ -208,4 +208,16 @@ public class DataFactory {
 
 		return fdad;
 	}
+
+	private static CrossValidator cv;
+	
+	public static OntonotesDataSet getOnfCvTrain() {
+		if (cv==null) cv = new CrossValidator(getONFDataSet(DATA_PATHS.ONF_NEWS,false),0.8);
+		return cv.getTrain();
+	}
+	public static OntonotesDataSet getOnfCvTest() {
+		if (cv==null) cv = new CrossValidator(getONFDataSet(DATA_PATHS.ONF_NEWS,false),0.8);
+		return cv.getTest();
+	}
+
 }

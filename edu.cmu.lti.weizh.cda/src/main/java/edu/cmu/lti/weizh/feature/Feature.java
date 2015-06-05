@@ -14,9 +14,16 @@ import edu.cmu.lti.weizh.docmodel.Word;
  */
 public class Feature<VALUETYPE> {
 
+	private static String[] FEATURE_HEADER;
 	private static String HEADER_DELIMITER;
 	private static String VALUE_DELIMITER;
 
+	public static void setFEATURE_HEADERS(String[] featureHeaders) {
+		FEATURE_HEADER=featureHeaders;
+	}
+	public static String[] getFEATURE_HEADERS(){
+		return FEATURE_HEADER;
+	}
 	public static void setHEADER_DELIMITER(String s) {
 		HEADER_DELIMITER = s;
 	}
@@ -118,6 +125,8 @@ public class Feature<VALUETYPE> {
 			return fh + w.getWord();
 		case FCONST.F_LEMMA:
 			return fh + w.getTrimLowered();
+		case FCONST.F_CAP:
+			return w.getWordForm().startsWith("A")?"A":"a";
 		case FCONST.F_WORDFORM:
 			return fh + w.getWordForm();
 		case FCONST.F_PREFIX:
@@ -171,4 +180,63 @@ public class Feature<VALUETYPE> {
 		} else
 			return Integer.MIN_VALUE;
 	}
+
+	static String thd = "-thd-";
+	static String tvd = "-tvd-";
+	static String fhd = "-fhd-";
+	static String fvd = "-fvd-";
+	
+	static String[] basicNerThetaHeaders = new String[] { 
+			//basic
+			FCONST.T_WORD, 
+			FCONST.T_LEMMA, 
+			FCONST.T_WORDFORM + thd + FCONST.T_SUFFIX,
+			FCONST.T_PREFIX + thd + FCONST.T_SUFFIX,
+			FCONST.T_POS + thd + FCONST.T_SUFFIX,
+			FCONST.T_POS, 
+			FCONST.T_WORDFORM,
+			FCONST.T_SUFFIX
+			};
+
+	static String[] basicNerFeatureHeaders = new String[] { 
+			// basic
+
+			FCONST.p(FCONST.F_POS, 2) + fhd + FCONST.p(FCONST.F_POS, 1), 
+			FCONST.p(FCONST.F_POS, 1) + fhd + FCONST.n(FCONST.F_POS, 1),
+			FCONST.n(FCONST.F_POS, 1) + fhd + FCONST.n(FCONST.F_POS, 2),
+			
+			FCONST.p(FCONST.F_WORDFORM, 2) + fhd + FCONST.p(FCONST.F_WORDFORM, 1), 
+			FCONST.p(FCONST.F_WORDFORM, 1) + fhd + FCONST.n(FCONST.F_WORDFORM, 1),
+			FCONST.n(FCONST.F_WORDFORM, 1) + fhd + FCONST.n(FCONST.F_WORDFORM, 2),
+			
+			FCONST.p(FCONST.F_LEMMA, 1), 
+			FCONST.p(FCONST.F_LEMMA, 2), 
+			FCONST.n(FCONST.F_LEMMA, 1),
+			FCONST.n(FCONST.F_LEMMA, 2),
+	};
+	public static String[] getOnfNerThetaHeaders() {
+		return basicNerThetaHeaders;
+	}
+
+	public static String[] getOnfNerFeatureHeaders() {
+		return basicNerFeatureHeaders;
+	}
+
+	public static String getThd() {
+		return thd;
+	}
+
+	public static String getTvd() {
+		return tvd;
+	}
+
+	public static String getFhd() {
+		return fhd;
+	}
+
+	public static String getFvd() {
+		return fvd;
+	}
+
+	
 }

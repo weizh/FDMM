@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 
+import edu.cmu.lti.weizh.eval.Prediction;
 import edu.cmu.lti.weizh.feature.FCONST;
 import edu.cmu.lti.weizh.feature.Feature;
 import edu.cmu.lti.weizh.feature.Theta;
@@ -214,9 +215,11 @@ public class PerceptronFDMM extends MLModel<String> {
 			throws Exception {
 		this.denom = i;
 		return viterbiDecode(thetas, features, true);
-
 	}
 
+	public Prediction[] tag(List<Theta<String>> thetas, List<List<Feature<String>>> features, double i){
+		return null;
+	}
 	/**
 	 * 
 	 * @param _theta

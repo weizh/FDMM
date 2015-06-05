@@ -17,8 +17,6 @@ public class OntonotesDataSet extends AbstractDataSet {
 		super(capacity, type);
 	}
 
-
-
 	public void predictionsNE_EntitybyEntity_Stat() throws Exception {
 
 		TObjectIntHashMap<String> correct, totalGold, totalPredict;

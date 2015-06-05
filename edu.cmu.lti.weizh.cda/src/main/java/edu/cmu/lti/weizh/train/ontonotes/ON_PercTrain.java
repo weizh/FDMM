@@ -56,9 +56,9 @@ public class ON_PercTrain extends AbstractPercTrain<String, ON_PercTrain, Ontono
 				FCONST.p(FCONST.F_POS, 1) + fhd + FCONST.n(FCONST.F_POS, 1),
 				FCONST.n(FCONST.F_POS, 1) + fhd + FCONST.n(FCONST.F_POS, 2),
 				
-				FCONST.p(FCONST.T_WORDFORM, 2) + fhd + FCONST.p(FCONST.T_WORDFORM, 1), 
-				FCONST.p(FCONST.T_WORDFORM, 1) + fhd + FCONST.n(FCONST.T_WORDFORM, 1),
-				FCONST.n(FCONST.T_WORDFORM, 1) + fhd + FCONST.n(FCONST.T_WORDFORM, 2),
+				FCONST.p(FCONST.F_WORDFORM, 2) + fhd + FCONST.p(FCONST.F_WORDFORM, 1), 
+				FCONST.p(FCONST.F_WORDFORM, 1) + fhd + FCONST.n(FCONST.F_WORDFORM, 1),
+				FCONST.n(FCONST.F_WORDFORM, 1) + fhd + FCONST.n(FCONST.F_WORDFORM, 2),
 				
 				FCONST.p(FCONST.F_LEMMA, 1), 
 				FCONST.p(FCONST.F_LEMMA, 2), 
@@ -67,26 +67,26 @@ public class ON_PercTrain extends AbstractPercTrain<String, ON_PercTrain, Ontono
 		};
 		
 		int iter=100; double th = Double.NEGATIVE_INFINITY;
-		ON_PercTrain abctrainer = new ON_PercTrain(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
-		ON_PercTrain mnbtrainer = new ON_PercTrain(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
+//		ON_PercTrain abctrainer = new ON_PercTrain(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
+//		ON_PercTrain mnbtrainer = new ON_PercTrain(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
 		ON_PercTrain cnntrainer = new ON_PercTrain(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
-		ON_PercTrain nbctrainer = new ON_PercTrain(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
-		ON_PercTrain pritrainer = new ON_PercTrain(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
-		ON_PercTrain voatrainer = new ON_PercTrain(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
+//		ON_PercTrain nbctrainer = new ON_PercTrain(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
+//		ON_PercTrain pritrainer = new ON_PercTrain(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
+//		ON_PercTrain voatrainer = new ON_PercTrain(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
 //
 //		abctrainer.train(DataFactory.getONFDataSet(DATA_PATHS.ONF_ABC_TRAIN,true), iter, th);
 //		mnbtrainer.train(DataFactory.getONFDataSet(DATA_PATHS.ONF_MNB_TRAIN,true), iter, th);
-//		cnntrainer.train(DataFactory.getONFDataSet(DATA_PATHS.ONF_CNN_TRAIN,true), iter, th);
+		cnntrainer.train(DataFactory.getONFDataSet(DATA_PATHS.ONF_CNN_TRAIN,true), iter, th);
 //		nbctrainer.train(DataFactory.getONFDataSet(DATA_PATHS.ONF_NBC_TRAIN,true),  iter, th);
 //		pritrainer.train(DataFactory.getONFDataSet(DATA_PATHS.ONF_PRI_TRAIN,true),  iter, th);
-		voatrainer.train(DataFactory.getONFDataSet(DATA_PATHS.ONF_VOA_TRAIN,true), iter, th);
-////
+//		voatrainer.train(DataFactory.getONFDataSet(DATA_PATHS.ONF_VOA_TRAIN,true), iter, th);
+//
 //		abctrainer.store("trainedModels/ONF_ABC_PERC_100_NegInf_basic.trainer");
 //		mnbtrainer.store("trainedModels/ONF_MNB_PERC_100_NegInf_basic.trainer");		
-//		cnntrainer.store("trainedModels/ONF_CNN_PERC_100_NegInf_basic.trainer");		
+		cnntrainer.store("trainedModels/ONF_CNN_PERC_100_NegInf_basic.trainer");		
 //		nbctrainer.store("trainedModels/ONF_NBC_PERC_100_NegInf_basic.trainer");
 //		pritrainer.store("trainedModels/ONF_PRI_PERC_100_NegInf_basic.trainer");
-		voatrainer.store("trainedModels/ONF_VOA_PERC_100_NegInf_basic.trainer");
+//		voatrainer.store("trainedModels/ONF_VOA_PERC_100_NegInf_basic.trainer");
 	}
 
 	@Override
