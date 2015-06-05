@@ -217,7 +217,7 @@ public class PerceptronFDMM extends MLModel<String> {
 		return viterbiDecode(thetas, features, true);
 	}
 
-	public Prediction[] tag(List<Theta<String>> thetas, List<List<Feature<String>>> features, double i){
+	public Prediction[] predictWithAverageParamLabelDist(List<Theta<String>> thetas, List<List<Feature<String>>> features, double i){
 		return null;
 	}
 	/**

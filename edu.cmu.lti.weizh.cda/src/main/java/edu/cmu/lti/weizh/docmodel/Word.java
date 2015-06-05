@@ -2,6 +2,8 @@ package edu.cmu.lti.weizh.docmodel;
 
 import java.io.Serializable;
 
+import edu.cmu.lti.weizh.eval.Prediction;
+
 /**
  * This class is a word class where each word has features such as POS, NE type, Chunk type.
  * The class does not include any field for word position info, or sentence info.
@@ -30,6 +32,8 @@ public class Word implements Serializable {
 
 	private String chunkType;
 
+	Prediction p;
+	
 	/**
 	 * Constructor with just word string.
 	 * 
