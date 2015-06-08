@@ -1,4 +1,4 @@
-package edu.cmu.lti.weizh.train;
+package edu.cmu.lti.weizh.train.__deprecated__;
 
 
 
@@ -7,6 +7,7 @@ import edu.cmu.lti.weizh.feature.Feature;
 import edu.cmu.lti.weizh.feature.Theta;
 import edu.cmu.lti.weizh.io.Storable;
 import edu.cmu.lti.weizh.mlmodel.FDMM;
+import edu.cmu.lti.weizh.train.Trainable;
 
 public abstract class AbstractFDMMTrainer<
 FVTYPE,

@@ -3,7 +3,7 @@ package edu.cmu.lti.weizh.nlp;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.cmu.lti.weizh.data.ontonotes.OntonotesDataSet;
+import edu.cmu.lti.weizh.docmodel.DataSet;
 import edu.cmu.lti.weizh.docmodel.Sentence;
 import edu.cmu.lti.weizh.docmodel.Word;
 import edu.cmu.lti.weizh.eval.Prediction;
@@ -12,7 +12,7 @@ import edu.cmu.lti.weizh.feature.Theta;
 import edu.cmu.lti.weizh.train.AbstractPercTrain;
 
 
-public abstract class AbstractPercTagger<M extends AbstractPercTrain<String, M, OntonotesDataSet>> implements Tagger{
+public abstract class AbstractPercTagger<M extends AbstractPercTrain<String, M, DataSet>> implements Tagger{
 
 	protected M percTrain;
 	protected double iter;

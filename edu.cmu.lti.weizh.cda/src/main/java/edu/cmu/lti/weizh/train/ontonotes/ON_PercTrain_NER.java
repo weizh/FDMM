@@ -1,19 +1,14 @@
 package edu.cmu.lti.weizh.train.ontonotes;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import edu.cmu.lti.weizh.data.DATA_PATHS;
 import edu.cmu.lti.weizh.data.DataFactory;
-import edu.cmu.lti.weizh.data.ontonotes.OntonotesDataSet;
-import edu.cmu.lti.weizh.docmodel.Document;
-import edu.cmu.lti.weizh.docmodel.Paragraph;
-import edu.cmu.lti.weizh.docmodel.Sentence;
+import edu.cmu.lti.weizh.docmodel.DataSet;
 import edu.cmu.lti.weizh.docmodel.Word;
 import edu.cmu.lti.weizh.feature.FCONST;
 import edu.cmu.lti.weizh.train.AbstractPercTrain;
 
-public class ON_PercTrain_NER extends AbstractPercTrain<String, ON_PercTrain_NER, OntonotesDataSet> {
+public class ON_PercTrain_NER extends AbstractPercTrain<String, ON_PercTrain_NER, DataSet> {
 
 	/**
 	 * 
@@ -97,21 +92,6 @@ public class ON_PercTrain_NER extends AbstractPercTrain<String, ON_PercTrain_NER
 	@Override
 	protected ON_PercTrain_NER self() {
 		return this;
-	}
-
-	@Override
-	public List<Sentence> getSentences(OntonotesDataSet d) {
-		ArrayList<Sentence> ss = new ArrayList<Sentence>();
-		try {
-			for (Document doc : d.getDocuments())
-				for (Paragraph para : doc.getParagraphs())
-					for (Sentence sent : para.getSentences()) {
-						ss.add(sent);
-					}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return ss;
 	}
 
 }

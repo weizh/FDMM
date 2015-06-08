@@ -1,4 +1,4 @@
-package edu.cmu.lti.weizh.train;
+package edu.cmu.lti.weizh.train.__deprecated__;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +13,7 @@ import edu.cmu.lti.weizh.docmodel.Sentence;
 import edu.cmu.lti.weizh.docmodel.Word;
 import edu.cmu.lti.weizh.feature.Feature;
 import edu.cmu.lti.weizh.feature.Theta;
+import edu.cmu.lti.weizh.train.Evaluatable;
 
 public abstract class AbstractTrigramFDMMEval<
 FVTYPE,

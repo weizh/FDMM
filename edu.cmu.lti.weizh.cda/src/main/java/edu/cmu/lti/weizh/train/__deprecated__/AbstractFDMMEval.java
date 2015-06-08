@@ -1,6 +1,7 @@
-package edu.cmu.lti.weizh.train;
+package edu.cmu.lti.weizh.train.__deprecated__;
 
 import edu.cmu.lti.weizh.docmodel.AbstractDataSet;
+import edu.cmu.lti.weizh.train.Evaluatable;
 
 public abstract class AbstractFDMMEval<
 VTYPE, 

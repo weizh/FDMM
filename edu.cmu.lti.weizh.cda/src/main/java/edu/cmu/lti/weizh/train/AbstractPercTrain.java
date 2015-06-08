@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import edu.cmu.lti.weizh.docmodel.AbstractDataSet;
+import edu.cmu.lti.weizh.docmodel.Document;
+import edu.cmu.lti.weizh.docmodel.Paragraph;
 import edu.cmu.lti.weizh.docmodel.Sentence;
 import edu.cmu.lti.weizh.docmodel.Word;
 import edu.cmu.lti.weizh.feature.Feature;
@@ -205,7 +207,19 @@ implements Trainable<PerceptronFDMM, D> {
 	 * @param d
 	 * @return
 	 */
-	protected abstract List<Sentence> getSentences(D d);
+	public List<Sentence> getSentences(D d) {
+		ArrayList<Sentence> ss = new ArrayList<Sentence>();
+		try {
+			for (Document doc : d.getDocuments())
+				for (Paragraph para : doc.getParagraphs())
+					for (Sentence sent : para.getSentences()) {
+						ss.add(sent);
+					}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ss;
+	}
 
 	/**
 	 * This function has to be re-written when moving to a new data label set.

@@ -2,8 +2,8 @@ package edu.cmu.lti.weizh.data;
 
 import java.util.Random;
 
-import edu.cmu.lti.weizh.data.ontonotes.OntonotesDataSet;
 import edu.cmu.lti.weizh.docmodel.Document;
+import edu.cmu.lti.weizh.docmodel.OntonotesDataSet;
 import edu.cmu.lti.weizh.docmodel.Paragraph;
 import edu.cmu.lti.weizh.docmodel.Sentence;
 

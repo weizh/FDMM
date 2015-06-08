@@ -1,11 +1,11 @@
 package edu.cmu.lti.weizh.train.nlpba;
 
 
-import edu.cmu.lti.weizh.data.CONLLFormatDataSet;
 import edu.cmu.lti.weizh.data.DataFactory;
+import edu.cmu.lti.weizh.docmodel.DataSet;
 import edu.cmu.lti.weizh.train.AbstractPercEval;
 
-public class NLPBA_PercEval extends AbstractPercEval<String,CONLLFormatDataSet, NLPBA_PercTrain > {
+public class NLPBA_PercEval extends AbstractPercEval<String,DataSet, NLPBA_PercTrain > {
 
 	NLPBA_PercEval(NLPBA_PercTrain trainer) {
 		super(trainer);

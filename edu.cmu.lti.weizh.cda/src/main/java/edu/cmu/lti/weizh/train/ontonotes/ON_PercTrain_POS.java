@@ -1,19 +1,15 @@
 package edu.cmu.lti.weizh.train.ontonotes;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 import edu.cmu.lti.weizh.data.DATA_PATHS;
 import edu.cmu.lti.weizh.data.DataFactory;
-import edu.cmu.lti.weizh.data.ontonotes.OntonotesDataSet;
-import edu.cmu.lti.weizh.docmodel.Document;
-import edu.cmu.lti.weizh.docmodel.Paragraph;
-import edu.cmu.lti.weizh.docmodel.Sentence;
+import edu.cmu.lti.weizh.docmodel.DataSet;
 import edu.cmu.lti.weizh.docmodel.Word;
 import edu.cmu.lti.weizh.feature.FCONST;
 import edu.cmu.lti.weizh.train.AbstractPercTrain;
 
-public class ON_PercTrain_POS extends AbstractPercTrain<String, ON_PercTrain_POS, OntonotesDataSet> {
+public class ON_PercTrain_POS extends AbstractPercTrain<String, ON_PercTrain_POS, DataSet> {
 
 	/**
 	 * 
@@ -24,7 +20,6 @@ public class ON_PercTrain_POS extends AbstractPercTrain<String, ON_PercTrain_POS
 			String featureHeaderDelimiter, String featureValueDelimiter) {
 		super(thetaHeaders, thetaHeaderDelimiter, thetaValueDelimiter, featureHeaders, featureHeaderDelimiter,
 				featureValueDelimiter);
-
 	}
 	
 	public ON_PercTrain_POS() {
@@ -67,7 +62,7 @@ public class ON_PercTrain_POS extends AbstractPercTrain<String, ON_PercTrain_POS
 		int iter=100; double th = Double.NEGATIVE_INFINITY;
 		
 		ON_PercTrain_POS postagger = new ON_PercTrain_POS(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
-		OntonotesDataSet onfAllTrain = DataFactory.getONFDataSet(DATA_PATHS.ONF_CNN_TEST, false);
+		DataSet onfAllTrain = DataFactory.getONFDataSet(DATA_PATHS.ONF_CNN_TEST, false);
 		postagger.train(onfAllTrain, iter, th);
 		postagger.store("trainedModels/ONF_CNNTrain_POS_PERC_100_NegInf_basic.trainer");
 	}
@@ -80,21 +75,6 @@ public class ON_PercTrain_POS extends AbstractPercTrain<String, ON_PercTrain_POS
 	@Override
 	protected ON_PercTrain_POS self() {
 		return this;
-	}
-
-	@Override
-	public List<Sentence> getSentences(OntonotesDataSet d) {
-		ArrayList<Sentence> ss = new ArrayList<Sentence>();
-		try {
-			for (Document doc : d.getDocuments())
-				for (Paragraph para : doc.getParagraphs())
-					for (Sentence sent : para.getSentences()) {
-						ss.add(sent);
-					}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return ss;
 	}
 
 }

@@ -1,4 +1,4 @@
-package edu.cmu.lti.weizh.train;
+package edu.cmu.lti.weizh.train.__deprecated__;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -12,6 +12,7 @@ import edu.cmu.lti.weizh.feature.Feature;
 import edu.cmu.lti.weizh.feature.Theta;
 import edu.cmu.lti.weizh.io.Storable;
 import edu.cmu.lti.weizh.mlmodel.TrigramFDMM;
+import edu.cmu.lti.weizh.train.Trainable;
 
 public abstract class AbstractTigramFDMMTrain<FVTYPE, T extends Trainable<TrigramFDMM, D>, D extends AbstractDataSet> extends
 		Storable<T> implements Trainable<TrigramFDMM, D> {

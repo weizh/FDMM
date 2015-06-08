@@ -3,8 +3,8 @@ package edu.cmu.lti.weizh.train.nlpba;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.cmu.lti.weizh.data.CONLLFormatDataSet;
 import edu.cmu.lti.weizh.data.DataFactory;
+import edu.cmu.lti.weizh.docmodel.DataSet;
 import edu.cmu.lti.weizh.docmodel.Document;
 import edu.cmu.lti.weizh.docmodel.Paragraph;
 import edu.cmu.lti.weizh.docmodel.Sentence;
@@ -13,7 +13,7 @@ import edu.cmu.lti.weizh.feature.FCONST;
 import edu.cmu.lti.weizh.feature.Feature;
 import edu.cmu.lti.weizh.train.AbstractPercTrain;
 
-public class NLPBA_PercTrain extends AbstractPercTrain<String, NLPBA_PercTrain, CONLLFormatDataSet> {
+public class NLPBA_PercTrain extends AbstractPercTrain<String, NLPBA_PercTrain, DataSet> {
 
 	/**
 	 * 
@@ -127,7 +127,7 @@ String[] nlpaFeatureHeaders = new String[] {
 	}
 
 	@Override
-	public List<Sentence> getSentences(CONLLFormatDataSet d) {
+	public List<Sentence> getSentences(DataSet d) {
 		ArrayList<Sentence> ss = new ArrayList<Sentence>();
 		try {
 			for (Document doc : d.getDocuments())

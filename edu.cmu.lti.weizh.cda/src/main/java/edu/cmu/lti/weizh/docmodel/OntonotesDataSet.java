@@ -1,13 +1,7 @@
-package edu.cmu.lti.weizh.data.ontonotes;
+package edu.cmu.lti.weizh.docmodel;
 
 import java.util.List;
 
-import edu.cmu.lti.weizh.docmodel.AbstractDataSet;
-import edu.cmu.lti.weizh.docmodel.Document;
-import edu.cmu.lti.weizh.docmodel.NamedEntity;
-import edu.cmu.lti.weizh.docmodel.Paragraph;
-import edu.cmu.lti.weizh.docmodel.Sentence;
-import edu.cmu.lti.weizh.docmodel.Word;
 import gnu.trove.iterator.TObjectIntIterator;
 import gnu.trove.map.hash.TObjectIntHashMap;
 

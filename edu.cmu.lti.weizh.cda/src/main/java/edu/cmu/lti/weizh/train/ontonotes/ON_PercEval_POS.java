@@ -3,10 +3,11 @@ package edu.cmu.lti.weizh.train.ontonotes;
 
 import edu.cmu.lti.weizh.data.DATA_PATHS;
 import edu.cmu.lti.weizh.data.DataFactory;
-import edu.cmu.lti.weizh.data.ontonotes.OntonotesDataSet;
+import edu.cmu.lti.weizh.docmodel.DataSet;
+import edu.cmu.lti.weizh.docmodel.OntonotesDataSet;
 import edu.cmu.lti.weizh.train.AbstractPercEval;
 
-public class ON_PercEval_POS extends AbstractPercEval<String,OntonotesDataSet, ON_PercTrain_POS > {
+public class ON_PercEval_POS extends AbstractPercEval<String,DataSet, ON_PercTrain_POS > {
 
 	ON_PercEval_POS(ON_PercTrain_POS trainer) {
 		super(trainer);

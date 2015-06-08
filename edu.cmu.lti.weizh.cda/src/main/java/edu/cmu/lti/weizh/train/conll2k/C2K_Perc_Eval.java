@@ -1,11 +1,11 @@
 package edu.cmu.lti.weizh.train.conll2k;
 
-import edu.cmu.lti.weizh.data.CONLLFormatDataSet;
 import edu.cmu.lti.weizh.data.DataFactory;
+import edu.cmu.lti.weizh.docmodel.DataSet;
 import edu.cmu.lti.weizh.train.AbstractPercEval;
 
 public class C2K_Perc_Eval extends
-		AbstractPercEval<String, CONLLFormatDataSet, C2K_Perc_Train> {
+		AbstractPercEval<String, DataSet, C2K_Perc_Train> {
 
 
 	C2K_Perc_Eval(C2K_Perc_Train trainer) {
@@ -138,7 +138,7 @@ System total F1: 0.9448296800048576
 	 * @param arg
 	 */
 	public static void main(String arg[]) {
-		CONLLFormatDataSet test2kData = DataFactory.getCONLL2kTest();
+		DataSet test2kData = DataFactory.getCONLL2kTest();
 //		CONLLFormatDataSet test2kData = DataFactory.getCONLL2kTrain();
 		C2K_Perc_Train trainer = new C2K_Perc_Train().load("CONLL2kFDMMPerceptron-100.trainer");
 		C2K_Perc_Eval evaluator = new C2K_Perc_Eval(trainer);

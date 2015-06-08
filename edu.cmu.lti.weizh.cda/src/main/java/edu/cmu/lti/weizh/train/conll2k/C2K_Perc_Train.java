@@ -1,15 +1,12 @@
 package edu.cmu.lti.weizh.train.conll2k;
 
-import java.util.List;
-
-import edu.cmu.lti.weizh.data.CONLLFormatDataSet;
 import edu.cmu.lti.weizh.data.DataFactory;
-import edu.cmu.lti.weizh.docmodel.Sentence;
+import edu.cmu.lti.weizh.docmodel.DataSet;
 import edu.cmu.lti.weizh.docmodel.Word;
 import edu.cmu.lti.weizh.feature.FCONST;
 import edu.cmu.lti.weizh.train.AbstractPercTrain;
 
-public class C2K_Perc_Train extends AbstractPercTrain<String, C2K_Perc_Train, CONLLFormatDataSet> {
+public class C2K_Perc_Train extends AbstractPercTrain<String, C2K_Perc_Train, DataSet> {
 
 	/**
 	 * 
@@ -49,7 +46,7 @@ public class C2K_Perc_Train extends AbstractPercTrain<String, C2K_Perc_Train, CO
 		};
 
 		C2K_Perc_Train trainer = new C2K_Perc_Train(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
-		CONLLFormatDataSet train2kData = DataFactory.getCONLL2kTrain();
+		DataSet train2kData = DataFactory.getCONLL2kTrain();
 		trainer.train(train2kData, 100, 1E-10);
 		trainer.store("CONLL2kFDMMPerceptron-" + trainer.getIterationsUsed() + ".trainer");
 
@@ -63,16 +60,6 @@ public class C2K_Perc_Train extends AbstractPercTrain<String, C2K_Perc_Train, CO
 	@Override
 	protected String getGoldLabel(Word w) {
 		return w.getChunkType();
-	}
-
-	@Override
-	protected List<Sentence> getSentences(CONLLFormatDataSet d) {
-		try {
-			return d.getDocuments().get(0).getParagraphs().get(0).getSentences();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 }

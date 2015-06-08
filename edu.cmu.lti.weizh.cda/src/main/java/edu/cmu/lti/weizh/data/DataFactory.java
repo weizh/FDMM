@@ -8,14 +8,14 @@ import edu.cmu.lti.weizh.data.conll2000.CONLL2kReader;
 import edu.cmu.lti.weizh.data.conll2002.CONLL02Reader;
 import edu.cmu.lti.weizh.data.nlpba.NLPBAReader;
 import edu.cmu.lti.weizh.data.ontonotes.OntoNotesDataFiller;
-import edu.cmu.lti.weizh.data.ontonotes.OntonotesDataSet;
+import edu.cmu.lti.weizh.docmodel.DataSet;
 import edu.cmu.lti.weizh.eval.EVAL_CONSTS;
 
 public class DataFactory {
 
 
-	public static CONLLFormatDataSet getCONLL2kTrain() {
-		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.CHUNK_TYPE);
+	public static DataSet getCONLL2kTrain() {
+		DataSet data = new DataSet(1000, EVAL_CONSTS.CHUNK_TYPE);
 		CONLL2kReader c2kreader;
 		try {
 			c2kreader = new CONLL2kReader((new FileReader(DATA_PATHS.CONLL2KTrain)));
@@ -29,8 +29,8 @@ public class DataFactory {
 		return data;
 	}
 
-	public static CONLLFormatDataSet getCONLL2kTest() {
-		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.CHUNK_TYPE);
+	public static DataSet getCONLL2kTest() {
+		DataSet data = new DataSet(1000, EVAL_CONSTS.CHUNK_TYPE);
 		CONLL2kReader c2kreader;
 		try {
 			c2kreader = new CONLL2kReader((new FileReader(DATA_PATHS.CONLL2KTest)));
@@ -44,8 +44,8 @@ public class DataFactory {
 		return data;
 	}
 
-	public static CONLLFormatDataSet getCONLL02NEDTrain() {
-		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
+	public static DataSet getCONLL02NEDTrain() {
+		DataSet data = new DataSet(1000, EVAL_CONSTS.NER_TYPE);
 		CONLL02Reader c02reader;
 		try {
 			c02reader = new CONLL02Reader((new FileReader(DATA_PATHS.CONLL02GERMENYTrain)));
@@ -60,8 +60,8 @@ public class DataFactory {
 
 	}
 
-	public static CONLLFormatDataSet getCONLL02NEDTestA() {
-		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
+	public static DataSet getCONLL02NEDTestA() {
+		DataSet data = new DataSet(1000, EVAL_CONSTS.NER_TYPE);
 		CONLL02Reader c02reader;
 		try {
 			c02reader = new CONLL02Reader((new FileReader(DATA_PATHS.CONLL02GERMENYTestA)));
@@ -76,8 +76,8 @@ public class DataFactory {
 
 	}
 
-	public static CONLLFormatDataSet getCONLL02NEDTestB() {
-		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
+	public static DataSet getCONLL02NEDTestB() {
+		DataSet data = new DataSet(1000, EVAL_CONSTS.NER_TYPE);
 		CONLL02Reader c02reader;
 		try {
 			c02reader = new CONLL02Reader((new FileReader(DATA_PATHS.CONLL02GERMENYTestB)));
@@ -92,8 +92,8 @@ public class DataFactory {
 
 	}
 
-	public static CONLLFormatDataSet getCONLL02EspTrain() {
-		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
+	public static DataSet getCONLL02EspTrain() {
+		DataSet data = new DataSet(1000, EVAL_CONSTS.NER_TYPE);
 		CONLL02Reader c02reader;
 		try {
 			c02reader = new CONLL02Reader((new FileReader(DATA_PATHS.CONLL02SPANISHTrain)));
@@ -108,8 +108,8 @@ public class DataFactory {
 
 	}
 
-	public static CONLLFormatDataSet getCONLL02EspTestA() {
-		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
+	public static DataSet getCONLL02EspTestA() {
+		DataSet data = new DataSet(1000, EVAL_CONSTS.NER_TYPE);
 		CONLL02Reader c02reader;
 		try {
 			c02reader = new CONLL02Reader((new FileReader(DATA_PATHS.CONLL02SPANISHTestA)));
@@ -125,8 +125,8 @@ public class DataFactory {
 
 	}
 
-	public static CONLLFormatDataSet getCONLL02EspTestB() {
-		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
+	public static DataSet getCONLL02EspTestB() {
+		DataSet data = new DataSet(1000, EVAL_CONSTS.NER_TYPE);
 		CONLL02Reader c02reader;
 		try {
 			c02reader = new CONLL02Reader((new FileReader(DATA_PATHS.CONLL02SPANISHTestB)));
@@ -142,8 +142,8 @@ public class DataFactory {
 
 	}
 
-	public static CONLLFormatDataSet getNLPBATrain() {
-		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
+	public static DataSet getNLPBATrain() {
+		DataSet data = new DataSet(1000, EVAL_CONSTS.NER_TYPE);
 		NLPBAReader nlpbareader;
 		try {
 			nlpbareader = new NLPBAReader((new FileReader(DATA_PATHS.NLPBATrain)));
@@ -159,8 +159,8 @@ public class DataFactory {
 
 	}
 
-	public static CONLLFormatDataSet getNLPBASampleTest() {
-		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
+	public static DataSet getNLPBASampleTest() {
+		DataSet data = new DataSet(1000, EVAL_CONSTS.NER_TYPE);
 		NLPBAReader nlpbareader;
 		try {
 			nlpbareader = new NLPBAReader((new FileReader(DATA_PATHS.NLPBASampleTest)));
@@ -175,8 +175,8 @@ public class DataFactory {
 
 	}
 
-	public static CONLLFormatDataSet getNLPBAEval() {
-		CONLLFormatDataSet data = new CONLLFormatDataSet(1000, EVAL_CONSTS.NER_TYPE);
+	public static DataSet getNLPBAEval() {
+		DataSet data = new DataSet(1000, EVAL_CONSTS.NER_TYPE);
 		NLPBAReader nlpbareader;
 		try {
 			nlpbareader = new NLPBAReader((new FileReader(DATA_PATHS.NLPBAEval)));
@@ -196,9 +196,9 @@ public class DataFactory {
 	 * @param collapseTag 
 	 * @return
 	 */
-	public static OntonotesDataSet getONFDataSet(String filePath, boolean collapseTag) {
+	public static DataSet getONFDataSet(String filePath, boolean collapseTag) {
 		System.err.println("Loading" + filePath);
-		OntonotesDataSet fdad = new OntonotesDataSet(19999, EVAL_CONSTS.NER_TYPE);
+		DataSet fdad = new DataSet(19999, EVAL_CONSTS.NER_TYPE);
 		try {
 			new OntoNotesDataFiller(fdad).fill(new File(filePath),collapseTag);
 		} catch (Exception e) {
