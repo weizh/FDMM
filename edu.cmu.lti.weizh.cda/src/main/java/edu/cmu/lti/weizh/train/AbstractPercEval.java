@@ -11,15 +11,12 @@ import edu.cmu.lti.weizh.docmodel.Document;
 import edu.cmu.lti.weizh.docmodel.Paragraph;
 import edu.cmu.lti.weizh.docmodel.Sentence;
 import edu.cmu.lti.weizh.docmodel.Word;
+import edu.cmu.lti.weizh.eval.Prediction;
 import edu.cmu.lti.weizh.feature.Feature;
 import edu.cmu.lti.weizh.feature.Theta;
 
-public abstract class AbstractPercEval<
-FVTYPE,
-D extends AbstractDataSet,
-T extends AbstractPercTrain<FVTYPE,T,D>
->
-implements Evaluatable<D> {
+public abstract class AbstractPercEval<FVTYPE, D extends AbstractDataSet, T extends AbstractPercTrain<FVTYPE, T, D>> implements
+		Evaluatable<D> {
 
 	/**
 	 * 
@@ -30,7 +27,7 @@ implements Evaluatable<D> {
 		this.trainer = trainer;
 		if (trainer == null)
 			throw new UnsupportedOperationException("Trainer should not be NULL. Otherwise Evaluator not found.");
-		
+
 		Theta.setTHETA_HEADERS(trainer.getThetaHeaders());
 		Theta.setHEADER_DELIMITER(trainer.getThetaHeaderDelimiter());
 		Theta.setVALUE_DELIMITER(trainer.getThetaValueDelimiter());
@@ -39,11 +36,24 @@ implements Evaluatable<D> {
 		Feature.setVALUE_DELIMITER(trainer.getFeatureValueDelimiter());
 	}
 
+	boolean isViterbi = true;
+
+	/**
+	 * Use false for viterbi (Or default); true for max-product message passing.
+	 * 
+	 * @param b
+	 */
+	protected void useMaxProductDecoding() {
+		isViterbi = false;
+	}
+
 	@Override
 	public void evaluate(D d) {
 
 		try {
-			for (Document doc : d.getDocuments())
+			for (Document doc : d.getDocuments()) {
+//				System.out.println(doc.getDocId());
+
 				for (Paragraph para : doc.getParagraphs())
 					for (Sentence s : para.getSentences()) {
 						List<Word> words = s.getWords();
@@ -62,11 +72,17 @@ implements Evaluatable<D> {
 							features.add(feats);
 							goldLabels[i] = (trainer.getGoldLabel(w));
 						}
-
-						String[] predictions = trainer.getModel().predictWithAverageParam(thetas, features,
-								trainer.getIterationsUsed() * trainer.getTotalSentProcessed());
+						int denom = trainer.getIterationsUsed() * trainer.getTotalSentProcessed();
+						String[] predictions;
+						if (isViterbi)
+							predictions = trainer.getModel().viterbiDecodeAvgParam(thetas, features, denom);
+						else {
+							Prediction[] preds = trainer.getModel().maxProductAvgParam(thetas, features, denom);
+							predictions = Prediction2String(preds);
+						}
 						setPredictions(words, predictions);
 					}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -75,6 +91,14 @@ implements Evaluatable<D> {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private String[] Prediction2String(Prediction[] preds) {
+		String p[] = new String[preds.length];
+		for (int i = 0; i < p.length; i++) {
+			p[i] = preds[i].getBestCandidateName();
+		}
+		return p;
 	}
 
 	private void setPredictions(List<Word> words, String[] predictions) {
@@ -87,7 +111,7 @@ implements Evaluatable<D> {
 			}
 		}
 	}
-	
+
 	private void printResults(D d) throws Exception {
 		HashMap<String, Double> predictions = new HashMap<String, Double>();
 		HashMap<String, Double> correctPredictions = new HashMap<String, Double>();
@@ -96,20 +120,20 @@ implements Evaluatable<D> {
 		for (Document doc : d.getDocuments())
 			for (Paragraph para : doc.getParagraphs())
 				for (Sentence s : para.getSentences()) {
-			List<Word> words = s.getWords();
-			for (Word w : words) {
-				String type = trainer.getGoldLabel(w);
-				String prediction = w.getPrediction();
-				putToMap(predictions, prediction);
-				if (type.equals(prediction))
-					putToMap(correctPredictions, type);
-				putToMap(totalCorrect, type);
-			}
-		}
-		printMaps(totalCorrect, predictions, correctPredictions);
+					List<Word> words = s.getWords();
+					for (Word w : words) {
+						String type = trainer.getGoldLabel(w);
+						String prediction = w.getPrediction();
+						putToMap(predictions, prediction);
+						if (type.equals(prediction))
+							putToMap(correctPredictions, type);
+						putToMap(totalCorrect, type);
+					}
+				}
+//		printMaps(totalCorrect, predictions, correctPredictions);
 		printF1(totalCorrect, predictions, correctPredictions);
 	}
-	
+
 	private void putToMap(HashMap<String, Double> m, String p) {
 
 		if (m.containsKey(p))
@@ -118,6 +142,7 @@ implements Evaluatable<D> {
 			m.put(p, 1.0);
 
 	}
+
 	private void printMaps(HashMap<String, Double> totalCorrect, HashMap<String, Double> predictions,
 			HashMap<String, Double> correctPredictions) {
 
@@ -130,7 +155,7 @@ implements Evaluatable<D> {
 			System.out.println("\tRecall is\t" + getProb(totalCorrect, correctPredictions, k));
 		}
 	}
-	
+
 	private void printF1(HashMap<String, Double> totalCorrect, HashMap<String, Double> predictions,
 			HashMap<String, Double> correctPredictions) {
 
@@ -142,7 +167,7 @@ implements Evaluatable<D> {
 		System.out.println("System total precision: " + totalCPred / totalPred);
 		System.out.println("System total F1: " + 2 * totalCPred / (totalGold + totalPred));
 	}
-	
+
 	private double getProb(HashMap<String, Double> predictions, HashMap<String, Double> correctPredictions, String k) {
 		if (predictions.containsKey(k))
 			if (correctPredictions.containsKey(k)) {
@@ -150,7 +175,7 @@ implements Evaluatable<D> {
 			}
 		return 0;
 	}
-	
+
 	private double getTotalNATExcluded(HashMap<String, Double> predictions) {
 		double t = 0;
 		for (Entry<String, Double> e : predictions.entrySet()) {
@@ -161,6 +186,5 @@ implements Evaluatable<D> {
 		}
 		return t;
 	}
-
 
 }

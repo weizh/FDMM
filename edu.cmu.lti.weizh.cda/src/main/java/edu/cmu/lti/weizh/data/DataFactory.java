@@ -209,15 +209,4 @@ public class DataFactory {
 		return fdad;
 	}
 
-	private static CrossValidator cv;
-	
-	public static OntonotesDataSet getOnfCvTrain() {
-		if (cv==null) cv = new CrossValidator(getONFDataSet(DATA_PATHS.ONF_NEWS,false),0.8);
-		return cv.getTrain();
-	}
-	public static OntonotesDataSet getOnfCvTest() {
-		if (cv==null) cv = new CrossValidator(getONFDataSet(DATA_PATHS.ONF_NEWS,false),0.8);
-		return cv.getTest();
-	}
-
 }

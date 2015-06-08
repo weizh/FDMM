@@ -3,6 +3,22 @@ package edu.cmu.lti.weizh.eval;
 public class Prediction {
 
 	String[] predNames;
+	public String[] getPredNames() {
+		return predNames;
+	}
+
+	public void setPredNames(String[] predNames) {
+		this.predNames = predNames;
+	}
+
+	public double[] getPredValues() {
+		return predValues;
+	}
+
+	public void setPredValues(double[] predValues) {
+		this.predValues = predValues;
+	}
+
 	double[] predValues;
 
 	String bestCandidateName;

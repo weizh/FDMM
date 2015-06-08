@@ -3,6 +3,7 @@ package edu.cmu.lti.weizh.train.ontonotes;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.cmu.lti.weizh.data.DATA_PATHS;
 import edu.cmu.lti.weizh.data.DataFactory;
 import edu.cmu.lti.weizh.data.ontonotes.OntonotesDataSet;
 import edu.cmu.lti.weizh.docmodel.Document;
@@ -63,13 +64,12 @@ public class ON_PercTrain_POS extends AbstractPercTrain<String, ON_PercTrain_POS
 				FCONST.n(FCONST.F_LEMMA, 2),
 		};
 		
-		int iter=1; double th = Double.NEGATIVE_INFINITY;
+		int iter=100; double th = Double.NEGATIVE_INFINITY;
 		
 		ON_PercTrain_POS postagger = new ON_PercTrain_POS(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
-		OntonotesDataSet onfAllTrain = DataFactory.getOnfCvTrain();
+		OntonotesDataSet onfAllTrain = DataFactory.getONFDataSet(DATA_PATHS.ONF_CNN_TEST, false);
 		postagger.train(onfAllTrain, iter, th);
-		postagger.store("trainedModels/ONF_ALL_POS_PERC_100_NegInf_basic.trainer");
-
+		postagger.store("trainedModels/ONF_CNNTrain_POS_PERC_100_NegInf_basic.trainer");
 	}
 	
 	@Override

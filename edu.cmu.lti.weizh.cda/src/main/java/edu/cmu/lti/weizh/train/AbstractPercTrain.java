@@ -132,13 +132,13 @@ implements Trainable<PerceptronFDMM, D> {
 			si = 0;
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 			Date date = new Date(System.currentTimeMillis());
-			System.err.println("Iteration " + t +"\t" + dateFormat.format(date));
+//			System.err.println("Iteration " + t +"\t" + dateFormat.format(date));
 			double totalNumOfLabels = 0;
 			double totalDiff = 0;
 			for (Sentence s : getSentences(d)) {
 				totalSents++;
-				if (si % 1000 == 0)
-					System.err.println(" Sentence " + si);
+//				if (si % 1000 == 0)
+//					System.err.println(" Sentence " + si);
 				List<Word> words = s.getWords();
 				List<Theta<String>> thetas = new ArrayList<Theta<String>>(words.size());
 				List<List<Feature<String>>> features = new ArrayList<List<Feature<String>>>(words.size());
@@ -153,14 +153,14 @@ implements Trainable<PerceptronFDMM, D> {
 					features.add(feats);
 					goldLabels[i] = (getGoldLabel(w));
 				}
-				String[] predictions = pfdmm.predictWithAverageParam(thetas, features, totalSents);
+				String[] predictions = pfdmm.viterbiDecodeAvgParam(thetas, features, totalSents);
 				totalDiff += getDiff(predictions, goldLabels);
 				totalNumOfLabels += predictions.length;
 				pfdmm.perceptronLearn(predictions, goldLabels, thetas, features);
 				si++;
 			}
 			double currentError = totalDiff / totalNumOfLabels;
-			System.err.println("Previous iteration error rate: "+prevError + "\t Current Iteration error rate:" + currentError);
+//			System.err.println("Previous iteration error rate: "+prevError + "\t Current Iteration error rate:" + currentError);
 			if (prevError == Double.NEGATIVE_INFINITY)
 				prevError = currentError;
 			else if (Math.abs(prevError - currentError) < this.THRESHOLD)
@@ -169,7 +169,7 @@ implements Trainable<PerceptronFDMM, D> {
 				prevError = currentError;
 		}
 
-		System.out.println(t + " iterations, each iteration processed " + totalSents +" sentences.");
+		System.err.println("Ran "+(t+1) + " iterations, total processed " + totalSents +" sentences.");
 
 		// set the t to be the actual num. of iterations
 		this.T = t;

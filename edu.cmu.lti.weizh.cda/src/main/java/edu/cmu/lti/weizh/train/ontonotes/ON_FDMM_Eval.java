@@ -12,7 +12,7 @@ import edu.cmu.lti.weizh.docmodel.Word;
 import edu.cmu.lti.weizh.eval.EVAL_CONSTS;
 import edu.cmu.lti.weizh.feature.ONF_CONSTS;
 import edu.cmu.lti.weizh.mlmodel.FDMM;
-import edu.cmu.lti.weizh.nlp.Stemmer;
+import edu.cmu.lti.weizh.nlp.stemming.Stemmer;
 import edu.cmu.lti.weizh.train.Evaluatable;
 
 public class ON_FDMM_Eval implements Evaluatable< OntonotesDataSet> {

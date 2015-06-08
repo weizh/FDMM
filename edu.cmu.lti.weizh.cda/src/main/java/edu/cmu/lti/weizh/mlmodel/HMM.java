@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import edu.cmu.lti.weizh.docmodel.Sentence;
 import edu.cmu.lti.weizh.docmodel.Word;
-import edu.cmu.lti.weizh.nlp.Stemmer;
+import edu.cmu.lti.weizh.nlp.stemming.Stemmer;
 import gnu.trove.iterator.TIntIntIterator;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;

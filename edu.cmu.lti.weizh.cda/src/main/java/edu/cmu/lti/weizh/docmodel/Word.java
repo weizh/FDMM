@@ -32,8 +32,8 @@ public class Word implements Serializable {
 
 	private String chunkType;
 
-	Prediction pDist;
-	
+	Prediction NerPDist;
+	Prediction PosPDist;
 	/**
 	 * Constructor with just word string.
 	 * 
@@ -96,12 +96,12 @@ public class Word implements Serializable {
 		return this.predition;
 	}
 
-	public void setPDist(Prediction prediction) {
-		this.pDist = prediction;
+	public void setNerPDist(Prediction prediction) {
+		this.NerPDist = prediction;
 	}
 
-	public Prediction getPDist() {
-		return this.pDist;
+	public Prediction getNerPDist() {
+		return this.NerPDist;
 	}
 	
 	public void setBooleanFolds(boolean[] rand) {
@@ -122,7 +122,7 @@ public class Word implements Serializable {
 	
 	/////////////// Override toString ////////////////////
 	public String toString() {
-		return word;
+		return word +"\t"+ this.partOfSpeech+"\t"+this.entityType;
 
 	}
 	
@@ -191,6 +191,14 @@ public class Word implements Serializable {
 
 	public String getPreffix(int i) {
 		return word.substring(0, word.length() > i ? i : word.length());
+	}
+
+	public void setPosPDist(Prediction prediction) {
+		this.PosPDist = prediction;
+	}
+
+	public Prediction getPosPDist() {
+		return PosPDist;
 	}
 
 	

@@ -211,13 +211,13 @@ public class PerceptronFDMM extends MLModel<String> {
 		return viterbiDecode(thetas, features, false);
 	}
 
-	public String[] predictWithAverageParam(List<Theta<String>> thetas, List<List<Feature<String>>> features, double i)
+	public String[] viterbiDecodeAvgParam(List<Theta<String>> thetas, List<List<Feature<String>>> features, double i)
 			throws Exception {
 		this.denom = i;
 		return viterbiDecode(thetas, features, true);
 	}
 
-	public Prediction[] predictWithAverageParamLabelDist(List<Theta<String>> thetas, List<List<Feature<String>>> features,
+	public Prediction[] maxProductAvgParam(List<Theta<String>> thetas, List<List<Feature<String>>> features,
 			double denom) {
 		this.denom = denom;
 		return fowardBackward(thetas, features);
@@ -232,29 +232,32 @@ public class PerceptronFDMM extends MLModel<String> {
 			String[] names = new String[labelIndex.size()];
 			double[] vals = new double[labelIndex.size()];
 
-			double sum = 0;
+			double[] sum = new double[labelIndex.size()];
 			for (Entry<String, Integer> label : labelIndex.entrySet()) {
 				String ls = label.getKey();
 				int li = label.getValue();
 				names[li] = ls;
-				double val = getHistSum(fTable, bTable, i, li);
-				vals[li] = val;
-				sum += val;
+				double logSum = getLogHistSum(fTable, bTable, i, li);
+				vals[li] = logSum;
+				sum[li]= logSum;
 			}
+			double logDenom = logSumOfExponentials(sum);
 			for (int j = 0; j < vals.length; j++)
-				vals[i] = vals[i] / sum;
+				vals[j] = Math.exp(vals[j] - logDenom);
+			
 			p[i] = new Prediction(names, vals);
 		}
 		return p;
 	}
 
-	private double getHistSum(double[][] fTable, double[][] bTable, int windex, int offset) {
-		double tempp = 0;
+	private double getLogHistSum(double[][] fTable, double[][] bTable, int windex, int offset) {
+		double[] tempp = new double[labelIndex.size()];
 		for (int i = 0; i < labelIndex.size(); i++) {
 			int index = i * labelIndex.size() + offset;
-			tempp += Math.exp(fTable[windex][index] + bTable[windex][index]);
+			if (Double.isNaN(fTable[windex][index]) == false && Double.isNaN(bTable[windex][index]) == false)
+				tempp[i]= (fTable[windex][index] + bTable[windex][index]);
 		}
-		return tempp;
+		return logSumOfExponentials(tempp);
 	}
 
 	private double[][] genBackwardTable(List<Theta<String>> thetas, List<List<Feature<String>>> features) {
@@ -265,12 +268,11 @@ public class PerceptronFDMM extends MLModel<String> {
 				valueGrid[i][j] = Double.NaN;
 			}
 		// TODO:
-		for (int i = 0; i < thetas.size(); i++) {
+		for (int i = thetas.size()-1; i >-1 ; i--) {
 			Theta<String> theta = thetas.get(i);
 			List<Feature<String>> feature = features.get(i);
 			beta(i, thetas.size(), valueGrid, theta, feature, true);
 		}
-		beta(thetas.size(), thetas.size(), valueGrid, null, null, true);
 
 		return valueGrid;
 	}
@@ -293,62 +295,75 @@ public class PerceptronFDMM extends MLModel<String> {
 
 	private void beta(int i, int size, double[][] vg, Theta<String> theta, List<Feature<String>> feature, boolean isAvg) {
 
-		if (i>=size) return; // should not process last layer
+		if (i >= size || i < 0)
+			return; // should not process last layer
 		int labelSize = this.labelSet.size();
 		int iStart = labelSize, iEnd = labelSize + 1;
 		// edge cases
-		if (i == size-1) {// elements in layer zero are at the top of list.
-						// previous node index is set to -1.
+		if (i == size - 1) {// elements in layer zero are at the top of list.
+							// previous node index is set to -1.
 			for (String l : this.labelSet) {
 				int c = this.getLabelIndex(l);
 				double emit = getThetaValues(theta, l, isAvg) + getFeatureValues(feature, l, isAvg);
-				double trans = getTransitionValues(labelSize, labelSize, c, isAvg);
-				double sum = emit + trans;
-				vg[0][c] = sum;
+				double tail = getTransitionValues(c, iEnd, iEnd, isAvg);
+
+				for (String pl : this.labelSet) {
+					int p = this.getLabelIndex(pl);
+					double trans = getTransitionValues(p, c, iEnd, isAvg);
+					double sum = emit + trans + tail;
+					vg[i][p * labelSize + c] = sum;
+				}
 			}
 			return;
 		}
 
 		// main cases ( 0< i < sentence size)
-		if (i == 1) {
+		if (i == 0) {
 
 			int pp = labelSize;
 			// just process layer i=1 (#0 is the first layer).
 			for (String l : this.labelSet) { // current
-				double emit = getThetaValues(theta, l, isAvg) + getFeatureValues(feature, l, isAvg);
 				int c = this.getLabelIndex(l);
-				for (int p = 0; p < labelSize; p++) {
-					double acc = vg[0][p];
-					vg[1][p * labelSize + c] = acc + emit + getTransitionValues(pp, p, c, isAvg);
+				double sum = 0;
+				double temp[] = new double[labelSize];
+				int loopi = 0 ;
+				for (String ns : this.labelSet) {
+					int n = getLabelIndex(ns);
+					double acc = vg[1][c * labelSet.size() + n];
+					double trans = getTransitionValues(labelSet.size(), c, n, isAvg);
+					double emit = getThetaValues(theta, ns, isAvg) + getFeatureValues(feature, ns, isAvg);
+					temp[loopi++]=(acc + trans + emit);
 				}
+				vg[0][c] = logSumOfExponentials(temp);
 			}
 		} else { // size
-			for (String l : this.labelSet) {
-				double emit = getThetaValues(theta, l, isAvg) + getFeatureValues(feature, l, isAvg);
-				int c = this.getLabelIndex(l);
-				for (int p = 0; p < labelSize; p++) {
+			for (String ps : this.labelSet) {
+				int p = this.getLabelIndex(ps);
+				for (String cs : this.labelSet) {
+					int c = this.getLabelIndex(cs);
 					int ci = p * labelSize + c;
-					double currentLogSum = 0 ;
-					for (int pp = 0; pp < labelSize; pp++) {
-						int pi = pp * labelSize + p;
-						double acc = vg[i - 1][pi];
-						double trans = getTransitionValues(pp, p, c, isAvg);
+					double [] temp = new double[labelSize];
+					int loopi=0;
+					for (String ns : this.labelSet) {
+						int n = this.getLabelIndex(ns);
+						double emit = getThetaValues(theta, ns, isAvg) + getFeatureValues(feature, ns, isAvg);
+						double acc = vg[i + 1][c * labelSet.size() + n];
+						double trans = getTransitionValues(p, c, n, isAvg);
 						double sum = emit + acc + trans;
-						currentLogSum+= Math.exp(sum);
+						temp[loopi] = sum;
 					}
-					currentLogSum = Math.log(currentLogSum) + emit;
-					vg[p][c] = currentLogSum;
+					vg[i][ci] = logSumOfExponentials(temp);
 				}
 			}
 			// printGrids(vg,bg);
 		}
 
-	
 	}
 
 	private void alpha(int i, int size, double[][] vg, Theta<String> theta, List<Feature<String>> feature, boolean isAvg) {
 
-		if (i>=size) return; // should not process last layer
+		if (i >= size)
+			return; // should not process last layer
 		int labelSize = this.labelSet.size();
 		int iStart = labelSize, iEnd = labelSize + 1;
 		// edge cases
@@ -383,21 +398,51 @@ public class PerceptronFDMM extends MLModel<String> {
 				int c = this.getLabelIndex(l);
 				for (int p = 0; p < labelSize; p++) {
 					int ci = p * labelSize + c;
-					double currentLogSum = 0 ;
+					double[] temp = new double[labelSize];
 					for (int pp = 0; pp < labelSize; pp++) {
 						int pi = pp * labelSize + p;
 						double acc = vg[i - 1][pi];
 						double trans = getTransitionValues(pp, p, c, isAvg);
 						double sum = emit + acc + trans;
-						currentLogSum+= Math.exp(sum);
+						temp[pp] = sum;
 					}
-					currentLogSum = Math.log(currentLogSum) + emit;
-					vg[p][c] = currentLogSum;
+					vg[i][ci] = logSumOfExponentials(temp) + emit;
 				}
 			}
 			// printGrids(vg,bg);
 		}
+	}
 
+	/**
+	 * From https://github.com/jmacglashan/generalResearch/blob/master/src/
+	 * generativemodel/LogSumExp.java Find the max term, and use that instead.
+	 * 
+	 * @param exponentialTerms
+	 * @return
+	 */
+	public static double logSumOfExponentials(double[] exponentialTerms) {
+
+		if (exponentialTerms.length == 0) {
+			return Double.NEGATIVE_INFINITY;
+		}
+
+		double maxTerm = Double.NEGATIVE_INFINITY;
+		for (double d : exponentialTerms) {
+			if (d > maxTerm) {
+				maxTerm = d;
+			}
+		}
+
+		if (maxTerm == Double.NEGATIVE_INFINITY) {
+			return Double.NEGATIVE_INFINITY;
+		}
+
+		double sum = 0.;
+		for (double d : exponentialTerms) {
+			sum += Math.exp(d - maxTerm);
+		}
+
+		return maxTerm + Math.log(sum);
 	}
 
 	/**
