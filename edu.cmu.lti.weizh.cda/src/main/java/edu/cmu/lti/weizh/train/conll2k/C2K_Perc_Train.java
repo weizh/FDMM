@@ -3,7 +3,8 @@ package edu.cmu.lti.weizh.train.conll2k;
 import edu.cmu.lti.weizh.data.DataFactory;
 import edu.cmu.lti.weizh.docmodel.DataSet;
 import edu.cmu.lti.weizh.docmodel.Word;
-import edu.cmu.lti.weizh.feature.FCONST;
+import edu.cmu.lti.weizh.feature.Feature;
+import edu.cmu.lti.weizh.feature.Theta;
 import edu.cmu.lti.weizh.train.AbstractPercTrain;
 
 public class C2K_Perc_Train extends AbstractPercTrain<String, C2K_Perc_Train, DataSet> {
@@ -25,27 +26,9 @@ public class C2K_Perc_Train extends AbstractPercTrain<String, C2K_Perc_Train, Da
 	}
 
 	public static void main(String argb[]) throws Exception {
-		String thd = "-thd-";
-		String tvd = "-tvd-";
-		String fhd = "-fhd-";
-		String fvd = "-fvd-";
 
-		String[] thetaHeaders = new String[] { FCONST.T_WORD, FCONST.T_LEMMA, FCONST.T_WORDFORM + thd + FCONST.T_SUFFIX,
-				FCONST.T_POS + thd + FCONST.T_SUFFIX, FCONST.T_POS, FCONST.T_WORDFORM, FCONST.T_SUFFIX };
-
-		String[] featureHeaders = new String[] { FCONST.p(FCONST.F_POS, 1), FCONST.n(FCONST.F_POS, 1),
-				FCONST.p(FCONST.F_POS, 2),
-				FCONST.n(FCONST.F_POS, 2),
-				//
-				FCONST.p(FCONST.F_LEMMA, 1), FCONST.p(FCONST.F_LEMMA, 2), FCONST.n(FCONST.F_LEMMA, 1),
-				FCONST.n(FCONST.F_LEMMA, 2),
-
-				FCONST.p(FCONST.F_SUFFIX, 1), FCONST.n(FCONST.F_SUFFIX, 1), FCONST.p(FCONST.F_PREFIX, 2),
-				FCONST.n(FCONST.F_PREFIX, 2),
-
-		};
-
-		C2K_Perc_Train trainer = new C2K_Perc_Train(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
+		C2K_Perc_Train trainer = new C2K_Perc_Train(Theta.getConll2kChunkingthetaHeaders(), Theta.getThd(), Theta.getTvd(),
+				Feature.getCONLL2KChunkingFeatureHeaders(), Feature.getFhd(), Feature.getFvd());
 		DataSet train2kData = DataFactory.getCONLL2kTrain();
 		trainer.train(train2kData, 100, 1E-10);
 		trainer.store("CONLL2kFDMMPerceptron-" + trainer.getIterationsUsed() + ".trainer");

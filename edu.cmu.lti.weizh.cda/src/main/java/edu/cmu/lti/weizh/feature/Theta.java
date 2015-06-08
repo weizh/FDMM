@@ -122,4 +122,74 @@ public class Theta<VALUETYPE> {
 		}
 	}
 
+	static String thd = "-thd-";
+	static String tvd = "-tvd-";
+	
+	static String[] basicNerThetaHeaders = new String[] { 
+		//basic
+		FCONST.T_WORD, 
+		FCONST.T_LEMMA, 
+		FCONST.T_WORDFORM + thd + FCONST.T_SUFFIX,
+		FCONST.T_PREFIX + thd + FCONST.T_SUFFIX,
+		FCONST.T_POS + thd + FCONST.T_SUFFIX,
+		FCONST.T_POS, 
+		FCONST.T_WORDFORM,
+		FCONST.T_SUFFIX
+		};
+	
+	public static String[] getOnfNerThetaHeaders() {
+		return basicNerThetaHeaders;
+	}
+	
+	 static String[] nlpbaThetaHeaders = new String[] { 
+		//basic
+		FCONST.T_WORD, 
+		FCONST.T_LEMMA, 
+		FCONST.T_CAP,
+		FCONST.T_WORDFORM,
+		FCONST.T_SUFFIX,
+		FCONST.T_PREFIX,
+		FCONST.T_CAP +thd+FCONST.T_PREFIX,
+		FCONST.T_CAP +thd + FCONST.T_WORDFORM,
+		FCONST.T_CAP +thd + FCONST.T_SUFFIX,
+		FCONST.T_WORDFORM + thd + FCONST.T_SUFFIX,
+		FCONST.T_WORDFORM + thd + FCONST.T_PREFIX,
+		FCONST.T_PREFIX + thd + FCONST.T_SUFFIX,
+
+		};
+	 public static String[] getNlpbaNerThetaHeaders(){
+		 return nlpbaThetaHeaders;
+	 }
+	 
+
+	static 	String[] conll2kChunkingthetaHeaders = new String[] { FCONST.T_WORD, FCONST.T_LEMMA, FCONST.T_WORDFORM + thd + FCONST.T_SUFFIX,
+				FCONST.T_POS + thd + FCONST.T_SUFFIX, FCONST.T_POS, FCONST.T_WORDFORM, FCONST.T_SUFFIX };
+
+	public static String[] getConll2kChunkingthetaHeaders(){
+		 return conll2kChunkingthetaHeaders;
+	 }
+	
+	static 
+	String[] POSthetaHeaders = new String[] { 
+		//basic
+		FCONST.T_WORD, 
+		FCONST.T_LEMMA, 
+		FCONST.T_WORDFORM + thd + FCONST.T_SUFFIX,
+		FCONST.T_PREFIX + thd + FCONST.T_SUFFIX,
+		FCONST.T_WORDFORM,
+		FCONST.T_SUFFIX
+		};
+	
+	public static String[] getPOSthetaHeaders(){
+		 return POSthetaHeaders;
+	 }
+	
+	public static String getThd() {
+		return thd;
+	}
+
+	public static String getTvd() {
+		return tvd;
+	}
+	
 }

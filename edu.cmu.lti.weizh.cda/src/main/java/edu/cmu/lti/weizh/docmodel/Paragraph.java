@@ -6,7 +6,12 @@ import java.util.List;
 
 public class Paragraph implements Serializable {
 
-  List<Sentence> sentences;
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+List<Sentence> sentences;
   public Paragraph(){
 	  this.sentences=new ArrayList<Sentence>();
   }

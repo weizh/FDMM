@@ -45,4 +45,7 @@ public class FCONST {
 		return ftype+"@N"+n;
 	}
 	
+	public enum LEARNERTYPE {
+		CONLL2KChunking, CONLL2kPOS, OntoNotesNewsNER, WebCrawl
+	};
 }

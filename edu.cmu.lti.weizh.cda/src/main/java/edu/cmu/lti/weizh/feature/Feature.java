@@ -181,22 +181,9 @@ public class Feature<VALUETYPE> {
 			return Integer.MIN_VALUE;
 	}
 
-	static String thd = "-thd-";
-	static String tvd = "-tvd-";
+
 	static String fhd = "-fhd-";
 	static String fvd = "-fvd-";
-	
-	static String[] basicNerThetaHeaders = new String[] { 
-			//basic
-			FCONST.T_WORD, 
-			FCONST.T_LEMMA, 
-			FCONST.T_WORDFORM + thd + FCONST.T_SUFFIX,
-			FCONST.T_PREFIX + thd + FCONST.T_SUFFIX,
-			FCONST.T_POS + thd + FCONST.T_SUFFIX,
-			FCONST.T_POS, 
-			FCONST.T_WORDFORM,
-			FCONST.T_SUFFIX
-			};
 
 	static String[] basicNerFeatureHeaders = new String[] { 
 			// basic
@@ -214,22 +201,101 @@ public class Feature<VALUETYPE> {
 			FCONST.n(FCONST.F_LEMMA, 1),
 			FCONST.n(FCONST.F_LEMMA, 2),
 	};
-	public static String[] getOnfNerThetaHeaders() {
-		return basicNerThetaHeaders;
-	}
+
 
 	public static String[] getOnfNerFeatureHeaders() {
 		return basicNerFeatureHeaders;
 	}
+	
+	static String[] nlpaFeatureHeaders = new String[] { 
+			// basic
+		FCONST.p(FCONST.F_LEMMA, 1), 
+		FCONST.p(FCONST.F_LEMMA, 2), 
+		FCONST.n(FCONST.F_LEMMA, 1),
+		FCONST.n(FCONST.F_LEMMA, 2),
+		
+		FCONST.p(FCONST.F_LEMMA, 2) + fhd + FCONST.p(FCONST.F_LEMMA, 1), 
+		FCONST.p(FCONST.F_LEMMA, 1) + fhd + FCONST.n(FCONST.F_LEMMA, 1),
+		FCONST.n(FCONST.F_LEMMA, 1) + fhd + FCONST.n(FCONST.F_LEMMA, 2),
+		
+		FCONST.p(FCONST.F_CAP, 1), 
+		FCONST.p(FCONST.F_CAP, 2), 
+		FCONST.n(FCONST.F_CAP, 1),
+		FCONST.n(FCONST.F_CAP, 2),
+		
+		FCONST.p(FCONST.F_CAP, 2) + fhd + FCONST.p(FCONST.F_CAP, 1), 
+		FCONST.p(FCONST.F_CAP, 1) + fhd + FCONST.n(FCONST.F_CAP, 1),
+		FCONST.n(FCONST.F_CAP, 1) + fhd + FCONST.n(FCONST.F_CAP, 2),
+		
+		FCONST.p(FCONST.F_WORDFORM, 1), 
+		FCONST.p(FCONST.F_WORDFORM, 2), 
+		FCONST.n(FCONST.F_WORDFORM, 1),
+		FCONST.n(FCONST.F_WORDFORM, 2),
+		FCONST.p(FCONST.F_WORDFORM, 2) + fhd + FCONST.p(FCONST.F_WORDFORM, 1), 
+		FCONST.p(FCONST.F_WORDFORM, 1) + fhd + FCONST.n(FCONST.F_WORDFORM, 1),
+		FCONST.n(FCONST.F_WORDFORM, 1) + fhd + FCONST.n(FCONST.F_WORDFORM, 2),
+		
+		FCONST.p(FCONST.F_SUFFIX, 1), 
+		FCONST.p(FCONST.F_SUFFIX, 2), 
+		FCONST.n(FCONST.F_SUFFIX, 1),
+		FCONST.n(FCONST.F_SUFFIX, 2),
+		
+		FCONST.p(FCONST.F_SUFFIX, 2) + fhd + FCONST.p(FCONST.F_SUFFIX, 1), 
+		FCONST.p(FCONST.F_SUFFIX, 1) + fhd + FCONST.n(FCONST.F_SUFFIX, 1),
+		FCONST.n(FCONST.F_SUFFIX, 1) + fhd + FCONST.n(FCONST.F_SUFFIX, 2),
+		
+		FCONST.p(FCONST.F_PREFIX, 1), 
+		FCONST.p(FCONST.F_PREFIX, 2), 
+		FCONST.n(FCONST.F_PREFIX, 1),
+		FCONST.n(FCONST.F_PREFIX, 2),
+		
+		FCONST.p(FCONST.F_PREFIX, 2) + fhd + FCONST.p(FCONST.F_PREFIX, 1), 
+		FCONST.p(FCONST.F_PREFIX, 1) + fhd + FCONST.n(FCONST.F_PREFIX, 1),
+		FCONST.n(FCONST.F_PREFIX, 1) + fhd + FCONST.n(FCONST.F_PREFIX, 2),
+			
+	};
 
-	public static String getThd() {
-		return thd;
+	public static String[] getNlpbaNerFeatureHeaders() {
+		return nlpaFeatureHeaders;
 	}
+	
+	static String[] conll2kChunkingfeatureHeaders = new String[] { FCONST.p(FCONST.F_POS, 1), FCONST.n(FCONST.F_POS, 1),
+			FCONST.p(FCONST.F_POS, 2),
+			FCONST.n(FCONST.F_POS, 2),
+			//
+			FCONST.p(FCONST.F_LEMMA, 1), FCONST.p(FCONST.F_LEMMA, 2), FCONST.n(FCONST.F_LEMMA, 1),
+			FCONST.n(FCONST.F_LEMMA, 2),
 
-	public static String getTvd() {
-		return tvd;
+			FCONST.p(FCONST.F_SUFFIX, 1), FCONST.n(FCONST.F_SUFFIX, 1), FCONST.p(FCONST.F_PREFIX, 2),
+			FCONST.n(FCONST.F_PREFIX, 2),
+
+	};
+	
+	public static String[] getCONLL2KChunkingFeatureHeaders() {
+		return conll2kChunkingfeatureHeaders;
 	}
+	
+	static String[] POSfeatureHeaders = new String[] { 
+		// basic
 
+		FCONST.p(FCONST.F_SUFFIX, 2) + fhd + FCONST.p(FCONST.F_SUFFIX, 1), 
+		FCONST.p(FCONST.F_SUFFIX, 1) + fhd + FCONST.n(FCONST.F_SUFFIX, 1),
+		FCONST.n(FCONST.F_SUFFIX, 1) + fhd + FCONST.n(FCONST.F_SUFFIX, 2),
+		
+		FCONST.p(FCONST.F_WORDFORM, 2) + fhd + FCONST.p(FCONST.F_WORDFORM, 1), 
+		FCONST.p(FCONST.F_WORDFORM, 1) + fhd + FCONST.n(FCONST.F_WORDFORM, 1),
+		FCONST.n(FCONST.F_WORDFORM, 1) + fhd + FCONST.n(FCONST.F_WORDFORM, 2),
+		
+		FCONST.p(FCONST.F_LEMMA, 1), 
+		FCONST.p(FCONST.F_LEMMA, 2), 
+		FCONST.n(FCONST.F_LEMMA, 1),
+		FCONST.n(FCONST.F_LEMMA, 2),
+};
+	
+	public static String[] getPOSfeatureHeaders() {
+		return POSfeatureHeaders;
+	}
+	
 	public static String getFhd() {
 		return fhd;
 	}
