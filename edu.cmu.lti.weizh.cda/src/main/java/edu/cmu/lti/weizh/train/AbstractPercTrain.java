@@ -17,14 +17,8 @@ import edu.cmu.lti.weizh.feature.Theta;
 import edu.cmu.lti.weizh.io.Storable;
 import edu.cmu.lti.weizh.mlmodel.PerceptronFDMM;
 
-public abstract class AbstractPercTrain
-<
-FVTYPE,
-T extends Trainable<PerceptronFDMM, D>, 
-D extends AbstractDataSet
-> 
-extends Storable<T> 
-implements Trainable<PerceptronFDMM, D> {
+public abstract class AbstractPercTrain<FVTYPE, T extends Trainable<PerceptronFDMM, D>, D extends AbstractDataSet> extends
+		Storable<T> implements Trainable<PerceptronFDMM, D> {
 
 	/**
 	 * 
@@ -32,35 +26,17 @@ implements Trainable<PerceptronFDMM, D> {
 	private static final long serialVersionUID = 1L;
 
 	protected String[] thetaHeaders;
-	protected String thetaHeaderDelimiter;
-	protected String thetaValueDelimiter;
 
 	protected String[] featureHeaders;
-	protected String featureHeaderDelimiter;
-	protected String featureValueDelimiter;
 
 	protected PerceptronFDMM pfdmm;
 
-	public AbstractPercTrain(String[] thetaHeaders, String thetaHeaderDelimiter, String thetaValueDelimiter,
-			String[] featureHeaders, String featureHeaderDelimiter, String featureValueDelimiter) {
+	public AbstractPercTrain(String[] thetaHeaders, String[] featureHeaders) {
 
 		this.pfdmm = new PerceptronFDMM();
 
 		this.thetaHeaders = thetaHeaders;
-		this.thetaHeaderDelimiter = thetaHeaderDelimiter;
-		this.thetaValueDelimiter = thetaValueDelimiter;
-
-		Theta.setTHETA_HEADERS(thetaHeaders);
-		Theta.setHEADER_DELIMITER(thetaHeaderDelimiter);
-		Theta.setVALUE_DELIMITER(thetaValueDelimiter);
-
 		this.featureHeaders = featureHeaders;
-		this.featureHeaderDelimiter = featureHeaderDelimiter;
-		this.featureValueDelimiter = featureValueDelimiter;
-
-		Feature.setHEADER_DELIMITER(featureHeaderDelimiter);
-		Feature.setVALUE_DELIMITER(featureValueDelimiter);
-
 	}
 
 	public AbstractPercTrain() {
@@ -75,11 +51,11 @@ implements Trainable<PerceptronFDMM, D> {
 	}
 
 	public String getFeatureHeaderDelimiter() {
-		return featureHeaderDelimiter;
+		return Feature.getHEADER_DELIMITER();
 	}
 
 	public String getFeatureValueDelimiter() {
-		return featureValueDelimiter;
+		return Feature.getVALUE_DELIMITER();
 	}
 
 	public String[] getThetaHeaders() {
@@ -87,11 +63,11 @@ implements Trainable<PerceptronFDMM, D> {
 	}
 
 	public String getThetaHeaderDelimiter() {
-		return thetaHeaderDelimiter;
+		return Theta.getHEADER_DELIMITER();
 	}
 
 	public String getThetaValueDelimiter() {
-		return thetaValueDelimiter;
+		return Theta.getVALUE_DELIMITER();
 	}
 
 	public int T;
@@ -102,29 +78,37 @@ implements Trainable<PerceptronFDMM, D> {
 	protected void setT(int t) {
 		T = t;
 	}
-	protected void setThreshold(double th){
+
+	protected void setThreshold(double th) {
 		this.THRESHOLD = th;
 	}
+
 	/**
-	 * Train data d with threshold th for stopping, or iteration t, which ever stops the training first.
-	 * @param d
-	 * @param t
-	 * @param th
-	 * @throws Exception 
+	 * Train data d with threshold th for stopping, or iteration t, which ever
+	 * stops the training first.
+	 * 
+	 * @param d Dataset
+	 * @param t Iterations
+	 * @param th threshold
+	 * @throws Exception
 	 */
-	public void train(D d, int t, double th) throws Exception{
+	public void train(D d, int t, double th) throws Exception {
 		setT(t);
 		setThreshold(th);
 		train(d);
 	}
-	
+
 	/**
 	 *
-	 * Train data d, using t and th implicitly set. Set T back into real # of iterations if stopped early due to threshold.
+	 * Train data d, using t and th implicitly set. Set T back into real # of
+	 * iterations if stopped early due to threshold.
 	 *
 	 */
 	@Override
 	public void train(D d) throws Exception {
+		
+		Theta.setTHETA_HEADERS(thetaHeaders);
+		
 		LabelSet = getLabelSet(getSentences(d));
 		pfdmm.setLabelSet(LabelSet);
 		TotalNoSent = getSentences(d).size();
@@ -134,13 +118,14 @@ implements Trainable<PerceptronFDMM, D> {
 			si = 0;
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 			Date date = new Date(System.currentTimeMillis());
-//			System.err.println("Iteration " + t +"\t" + dateFormat.format(date));
+			// System.err.println("Iteration " + t +"\t" +
+			// dateFormat.format(date));
 			double totalNumOfLabels = 0;
 			double totalDiff = 0;
 			for (Sentence s : getSentences(d)) {
 				totalSents++;
-//				if (si % 1000 == 0)
-//					System.err.println(" Sentence " + si);
+				// if (si % 1000 == 0)
+				// System.err.println(" Sentence " + si);
 				List<Word> words = s.getWords();
 				List<Theta<String>> thetas = new ArrayList<Theta<String>>(words.size());
 				List<List<Feature<String>>> features = new ArrayList<List<Feature<String>>>(words.size());
@@ -162,7 +147,8 @@ implements Trainable<PerceptronFDMM, D> {
 				si++;
 			}
 			double currentError = totalDiff / totalNumOfLabels;
-//			System.err.println("Previous iteration error rate: "+prevError + "\t Current Iteration error rate:" + currentError);
+			// System.err.println("Previous iteration error rate: "+prevError +
+			// "\t Current Iteration error rate:" + currentError);
 			if (prevError == Double.NEGATIVE_INFINITY)
 				prevError = currentError;
 			else if (Math.abs(prevError - currentError) < this.THRESHOLD)
@@ -171,17 +157,17 @@ implements Trainable<PerceptronFDMM, D> {
 				prevError = currentError;
 		}
 
-		System.err.println("Ran "+(t+1) + " iterations, total processed " + totalSents +" sentences.");
+		System.err.println("Ran " + (t + 1) + " iterations, total processed " + totalSents + " sentences.");
 
 		// set the t to be the actual num. of iterations
 		this.T = t;
 	}
-	
+
 	public int getIterationsUsed() {
 		return T;
 	}
-	
-	public int getTotalSentProcessed()	{
+
+	public int getTotalSentProcessed() {
 		return TotalNoSent;
 	}
 

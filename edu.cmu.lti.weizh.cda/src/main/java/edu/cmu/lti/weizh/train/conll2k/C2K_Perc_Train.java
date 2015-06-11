@@ -14,10 +14,8 @@ public class C2K_Perc_Train extends AbstractPercTrain<String, C2K_Perc_Train, Da
 	 */
 	private static final long serialVersionUID = 1L;
 
-	C2K_Perc_Train(String[] thetaHeaders, String thetaHeaderDelimiter, String thetaValueDelimiter, String[] featureHeaders,
-			String featureHeaderDelimiter, String featureValueDelimiter) {
-		super(thetaHeaders, thetaHeaderDelimiter, thetaValueDelimiter, featureHeaders, featureHeaderDelimiter,
-				featureValueDelimiter);
+	C2K_Perc_Train(String[] thetaHeaders,  String[] featureHeaders) {
+		super(thetaHeaders, featureHeaders);
 
 	}
 
@@ -27,8 +25,8 @@ public class C2K_Perc_Train extends AbstractPercTrain<String, C2K_Perc_Train, Da
 
 	public static void main(String argb[]) throws Exception {
 
-		C2K_Perc_Train trainer = new C2K_Perc_Train(Theta.getConll2kChunkingthetaHeaders(), Theta.getThd(), Theta.getTvd(),
-				Feature.getCONLL2KChunkingFeatureHeaders(), Feature.getFhd(), Feature.getFvd());
+		C2K_Perc_Train trainer = new C2K_Perc_Train(Theta.getConll2kChunkingthetaHeaders(),
+				Feature.getCONLL2KChunkingFeatureHeaders());
 		DataSet train2kData = DataFactory.getCONLL2kTrain();
 		trainer.train(train2kData, 100, 1E-10);
 		trainer.store("CONLL2kFDMMPerceptron-" + trainer.getIterationsUsed() + ".trainer");

@@ -16,8 +16,8 @@ import edu.cmu.lti.weizh.docmodel.Word;
 public class Theta<VALUETYPE> {
 
 	private static String[] THETA_HEADERS;
-	private static String HEADER_DELIMITER;
-	private static String VALUE_DELIMITER;
+	private static String HEADER_DELIMITER="-thd-";
+	private static String VALUE_DELIMITER="-tvd-";
 
 	public static void setTHETA_HEADERS(String[] headers) {
 		THETA_HEADERS = headers;
@@ -81,6 +81,7 @@ public class Theta<VALUETYPE> {
 		return this;
 	}
 
+	@SuppressWarnings("unchecked")
 	private VALUETYPE getCompondFeatureValue(String h, Word w) {
 		String[] header = h.trim().split(Theta.HEADER_DELIMITER);
 		StringBuilder sb = new StringBuilder();
@@ -122,8 +123,8 @@ public class Theta<VALUETYPE> {
 		}
 	}
 
-	static String thd = "-thd-";
-	static String tvd = "-tvd-";
+	static String thd = HEADER_DELIMITER;
+	static String tvd = VALUE_DELIMITER;
 	
 	static String[] basicNerThetaHeaders = new String[] { 
 		//basic
@@ -183,13 +184,4 @@ public class Theta<VALUETYPE> {
 	public static String[] getPOSthetaHeaders(){
 		 return POSthetaHeaders;
 	 }
-	
-	public static String getThd() {
-		return thd;
-	}
-
-	public static String getTvd() {
-		return tvd;
-	}
-	
 }

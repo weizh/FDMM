@@ -122,7 +122,7 @@ public class Word implements Serializable {
 	
 	/////////////// Override toString ////////////////////
 	public String toString() {
-		return word +"\t"+ this.partOfSpeech+"\t"+this.entityType;
+		return word +"\t[POS:"+ this.partOfSpeech+"]\t[NE:"+this.entityType+"]\t[CHUNK:"+ this.chunkType+"]";
 
 	}
 	

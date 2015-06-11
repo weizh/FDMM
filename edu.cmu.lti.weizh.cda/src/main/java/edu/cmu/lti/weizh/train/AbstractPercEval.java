@@ -28,12 +28,6 @@ public abstract class AbstractPercEval<FVTYPE, D extends AbstractDataSet, T exte
 		if (trainer == null)
 			throw new UnsupportedOperationException("Trainer should not be NULL. Otherwise Evaluator not found.");
 
-		Theta.setTHETA_HEADERS(trainer.getThetaHeaders());
-		Theta.setHEADER_DELIMITER(trainer.getThetaHeaderDelimiter());
-		Theta.setVALUE_DELIMITER(trainer.getThetaValueDelimiter());
-
-		Feature.setHEADER_DELIMITER(trainer.getFeatureHeaderDelimiter());
-		Feature.setVALUE_DELIMITER(trainer.getFeatureValueDelimiter());
 	}
 
 	boolean isViterbi = true;
@@ -49,48 +43,51 @@ public abstract class AbstractPercEval<FVTYPE, D extends AbstractDataSet, T exte
 
 	@Override
 	public void evaluate(D d) {
+		
+		Theta.setTHETA_HEADERS(trainer.getThetaHeaders());
 
 		try {
-			for (Document doc : d.getDocuments()) {
-//				System.out.println(doc.getDocId());
-
+			
+			for (Document doc : d.getDocuments())
 				for (Paragraph para : doc.getParagraphs())
-					for (Sentence s : para.getSentences()) {
-						List<Word> words = s.getWords();
-
-						List<Theta<String>> thetas = new ArrayList<Theta<String>>(words.size());
-						List<List<Feature<String>>> features = new ArrayList<List<Feature<String>>>(words.size());
-						String[] goldLabels = new String[words.size()];
-
-						for (int i = 0; i < words.size(); i++) {
-							Word w = words.get(i);
-							Theta<String> theta = new Theta<String>(w);
-							thetas.add(theta);
-							List<Feature<String>> feats = new ArrayList<Feature<String>>(trainer.getFeatureHeaders().length);
-							for (String fheader : trainer.getFeatureHeaders())
-								feats.add(new Feature<String>(fheader, s, i));
-							features.add(feats);
-							goldLabels[i] = (trainer.getGoldLabel(w));
-						}
-						int denom = trainer.getIterationsUsed() * trainer.getTotalSentProcessed();
-						String[] predictions;
-						if (isViterbi)
-							predictions = trainer.getModel().viterbiDecodeAvgParam(thetas, features, denom);
-						else {
-							Prediction[] preds = trainer.getModel().maxProductAvgParam(thetas, features, denom);
-							predictions = Prediction2String(preds);
-						}
-						setPredictions(words, predictions);
-					}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
+					for (Sentence s : para.getSentences())
+						evaluateSentence(s);
+			
 			printResults(d);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void evaluateSentence(Sentence s) throws Exception {
+
+		List<Word> words = s.getWords();
+
+		List<Theta<String>> thetas = new ArrayList<Theta<String>>(words.size());
+		List<List<Feature<String>>> features = new ArrayList<List<Feature<String>>>(words.size());
+		String[] goldLabels = new String[words.size()];
+
+		for (int i = 0; i < words.size(); i++) {
+			Word w = words.get(i);
+			Theta<String> theta = new Theta<String>(w);
+			thetas.add(theta);
+			List<Feature<String>> feats = new ArrayList<Feature<String>>(trainer.getFeatureHeaders().length);
+			for (String fheader : trainer.getFeatureHeaders())
+				feats.add(new Feature<String>(fheader, s, i));
+			features.add(feats);
+			goldLabels[i] = (trainer.getGoldLabel(w));
+		}
+		int denom = trainer.getIterationsUsed() * trainer.getTotalSentProcessed();
+		String[] predictions;
+		if (isViterbi)
+			predictions = trainer.getModel().viterbiDecodeAvgParam(thetas, features, denom);
+		else {
+			Prediction[] preds = trainer.getModel().maxProductAvgParam(thetas, features, denom);
+			predictions = Prediction2String(preds);
+		}
+		setPredictions(words, predictions);
+
 	}
 
 	private String[] Prediction2String(Prediction[] preds) {
@@ -130,7 +127,7 @@ public abstract class AbstractPercEval<FVTYPE, D extends AbstractDataSet, T exte
 						putToMap(totalCorrect, type);
 					}
 				}
-//		printMaps(totalCorrect, predictions, correctPredictions);
+		// printMaps(totalCorrect, predictions, correctPredictions);
 		printF1(totalCorrect, predictions, correctPredictions);
 	}
 

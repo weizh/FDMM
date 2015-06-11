@@ -34,7 +34,6 @@ public abstract class AbstractPercTagger<M extends AbstractPercTrain<String, M, 
 		Theta.setTHETA_HEADERS(percTrain.getThetaHeaders());
 		Theta.setHEADER_DELIMITER(percTrain.getFeatureHeaderDelimiter());
 		Theta.setVALUE_DELIMITER(percTrain.getThetaValueDelimiter());
-		Feature.setFEATURE_HEADERS(percTrain.getFeatureHeaders());
 		Feature.setHEADER_DELIMITER(percTrain.getFeatureHeaderDelimiter());
 		Feature.setVALUE_DELIMITER(percTrain.getFeatureValueDelimiter());
 		
@@ -69,7 +68,6 @@ public abstract class AbstractPercTagger<M extends AbstractPercTrain<String, M, 
 		Theta.setTHETA_HEADERS(percTrain.getThetaHeaders());
 		Theta.setHEADER_DELIMITER(percTrain.getFeatureHeaderDelimiter());
 		Theta.setVALUE_DELIMITER(percTrain.getThetaValueDelimiter());
-		Feature.setFEATURE_HEADERS(percTrain.getFeatureHeaders());
 		Feature.setHEADER_DELIMITER(percTrain.getFeatureHeaderDelimiter());
 		Feature.setVALUE_DELIMITER(percTrain.getFeatureValueDelimiter());
 		

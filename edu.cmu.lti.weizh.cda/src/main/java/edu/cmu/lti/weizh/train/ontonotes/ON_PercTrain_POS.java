@@ -15,10 +15,8 @@ public class ON_PercTrain_POS extends AbstractPercTrain<String, ON_PercTrain_POS
 	 */
 	private static final long serialVersionUID = 1L;
 
-	ON_PercTrain_POS(String[] thetaHeaders, String thetaHeaderDelimiter, String thetaValueDelimiter, String[] featureHeaders,
-			String featureHeaderDelimiter, String featureValueDelimiter) {
-		super(thetaHeaders, thetaHeaderDelimiter, thetaValueDelimiter, featureHeaders, featureHeaderDelimiter,
-				featureValueDelimiter);
+	ON_PercTrain_POS(String[] thetaHeaders,  String[] featureHeaders) {
+		super(thetaHeaders, featureHeaders);
 	}
 
 	public ON_PercTrain_POS() {
@@ -30,8 +28,7 @@ public class ON_PercTrain_POS extends AbstractPercTrain<String, ON_PercTrain_POS
 		int iter = 100;
 		double th = Double.NEGATIVE_INFINITY;
 
-		ON_PercTrain_POS postagger = new ON_PercTrain_POS(Theta.getPOSthetaHeaders(), Theta.getThd(), Theta.getTvd(),
-				Feature.getPOSfeatureHeaders(), Feature.getFhd(), Feature.getFvd());
+		ON_PercTrain_POS postagger = new ON_PercTrain_POS(Theta.getPOSthetaHeaders(), Feature.getPOSfeatureHeaders());
 		DataSet onfAllTrain = DataFactory.getONFDataSet(DATA_PATHS.ONF_CNN_TEST, false);
 		postagger.train(onfAllTrain, iter, th);
 		postagger.store("trainedModels/ONF_CNNTrain_POS_PERC_100_NegInf_basic.trainer");

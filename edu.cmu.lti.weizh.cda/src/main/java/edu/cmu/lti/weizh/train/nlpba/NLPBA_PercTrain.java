@@ -14,10 +14,8 @@ public class NLPBA_PercTrain extends AbstractPercTrain<String, NLPBA_PercTrain, 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	NLPBA_PercTrain(String[] thetaHeaders, String thetaHeaderDelimiter, String thetaValueDelimiter, String[] featureHeaders,
-			String featureHeaderDelimiter, String featureValueDelimiter) {
-		super(thetaHeaders, thetaHeaderDelimiter, thetaValueDelimiter, featureHeaders, featureHeaderDelimiter,
-				featureValueDelimiter);
+	NLPBA_PercTrain(String[] thetaHeaders, String[] featureHeaders) {
+		super(thetaHeaders, featureHeaders);
 
 	}
 
@@ -29,8 +27,7 @@ public class NLPBA_PercTrain extends AbstractPercTrain<String, NLPBA_PercTrain, 
 
 		int iter = 100;
 		double th = Double.NEGATIVE_INFINITY;
-		NLPBA_PercTrain abctrainer = new NLPBA_PercTrain(Theta.getNlpbaNerThetaHeaders(), Theta.getThd(), Theta.getTvd(),
-				Feature.getNlpbaNerFeatureHeaders(), Feature.getFhd(), Feature.getFvd());
+		NLPBA_PercTrain abctrainer = new NLPBA_PercTrain(Theta.getNlpbaNerThetaHeaders(), Feature.getNlpbaNerFeatureHeaders());
 		//
 		abctrainer.train(DataFactory.getNLPBATrain(), iter, th);
 

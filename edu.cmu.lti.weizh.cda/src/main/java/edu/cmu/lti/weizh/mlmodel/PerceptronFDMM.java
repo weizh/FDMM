@@ -211,14 +211,19 @@ public class PerceptronFDMM extends MLModel<String> {
 		return viterbiDecode(thetas, features, false);
 	}
 
-	public String[] viterbiDecodeAvgParam(List<Theta<String>> thetas, List<List<Feature<String>>> features, double i)
+	public String[] viterbiDecodeAvgParam(List<Theta<String>> thetas, List<List<Feature<String>>> features, double denom)
 			throws Exception {
-		this.denom = i;
+		this.denom = denom;
 		return viterbiDecode(thetas, features, true);
 	}
 
-	public Prediction[] maxProductAvgParam(List<Theta<String>> thetas, List<List<Feature<String>>> features,
-			double denom) {
+	public iNode[] viterbiDecodeAvgParam(List<Theta<String>> thetas, List<List<Feature<String>>> features, int denom, int n)
+			throws Exception {
+		this.denom = denom;
+		return viterbiDecodeNBest(thetas, features, true);
+	}
+
+	public Prediction[] maxProductAvgParam(List<Theta<String>> thetas, List<List<Feature<String>>> features, double denom) {
 		this.denom = denom;
 		return fowardBackward(thetas, features);
 	}
@@ -239,12 +244,12 @@ public class PerceptronFDMM extends MLModel<String> {
 				names[li] = ls;
 				double logSum = getLogHistSum(fTable, bTable, i, li);
 				vals[li] = logSum;
-				sum[li]= logSum;
+				sum[li] = logSum;
 			}
 			double logDenom = logSumOfExponentials(sum);
 			for (int j = 0; j < vals.length; j++)
 				vals[j] = Math.exp(vals[j] - logDenom);
-			
+
 			p[i] = new Prediction(names, vals);
 		}
 		return p;
@@ -255,7 +260,7 @@ public class PerceptronFDMM extends MLModel<String> {
 		for (int i = 0; i < labelIndex.size(); i++) {
 			int index = i * labelIndex.size() + offset;
 			if (Double.isNaN(fTable[windex][index]) == false && Double.isNaN(bTable[windex][index]) == false)
-				tempp[i]= (fTable[windex][index] + bTable[windex][index]);
+				tempp[i] = (fTable[windex][index] + bTable[windex][index]);
 		}
 		return logSumOfExponentials(tempp);
 	}
@@ -268,7 +273,7 @@ public class PerceptronFDMM extends MLModel<String> {
 				valueGrid[i][j] = Double.NaN;
 			}
 		// TODO:
-		for (int i = thetas.size()-1; i >-1 ; i--) {
+		for (int i = thetas.size() - 1; i > -1; i--) {
 			Theta<String> theta = thetas.get(i);
 			List<Feature<String>> feature = features.get(i);
 			beta(i, thetas.size(), valueGrid, theta, feature, true);
@@ -326,13 +331,13 @@ public class PerceptronFDMM extends MLModel<String> {
 				int c = this.getLabelIndex(l);
 				double sum = 0;
 				double temp[] = new double[labelSize];
-				int loopi = 0 ;
+				int loopi = 0;
 				for (String ns : this.labelSet) {
 					int n = getLabelIndex(ns);
 					double acc = vg[1][c * labelSet.size() + n];
 					double trans = getTransitionValues(labelSet.size(), c, n, isAvg);
 					double emit = getThetaValues(theta, ns, isAvg) + getFeatureValues(feature, ns, isAvg);
-					temp[loopi++]=(acc + trans + emit);
+					temp[loopi++] = (acc + trans + emit);
 				}
 				vg[0][c] = logSumOfExponentials(temp);
 			}
@@ -342,8 +347,8 @@ public class PerceptronFDMM extends MLModel<String> {
 				for (String cs : this.labelSet) {
 					int c = this.getLabelIndex(cs);
 					int ci = p * labelSize + c;
-					double [] temp = new double[labelSize];
-					int loopi=0;
+					double[] temp = new double[labelSize];
+					int loopi = 0;
 					for (String ns : this.labelSet) {
 						int n = this.getLabelIndex(ns);
 						double emit = getThetaValues(theta, ns, isAvg) + getFeatureValues(feature, ns, isAvg);
@@ -446,6 +451,233 @@ public class PerceptronFDMM extends MLModel<String> {
 	}
 
 	/**
+	 * A node in decoding grid.
+	 * 
+	 * @author wei
+	 *
+	 */
+	class Node {
+		int index;
+		double[] logProb;
+		Node[] nbest;
+
+		/**
+		 * size is the size of the backTrack list.
+		 * 
+		 * @param size
+		 */
+		Node(int size, int index) {
+			this.index = index;
+			logProb = new double[size];
+			nbest = new Node[size];
+			for (int i = 0; i < size; i++) {
+				logProb[i] = Double.NaN;
+				nbest[i] = null;
+			}
+		}
+	}
+
+	public class iNode implements Comparable<iNode> {
+		public double prob;
+		public String[] sequence;
+
+		iNode(double logProb, String[] seq) {
+			this.prob = logProb;
+			this.sequence = seq;
+		}
+
+		@Override
+		public int compareTo(iNode arg0) {
+			if (prob < arg0.prob)
+				return 1;
+			if (prob - arg0.prob < 1E-100)
+				return 0;
+			return -1;
+		}
+
+		public String[] getSequence() {
+			if (sequence == null)
+				throw new UnsupportedOperationException("sequence must be set before get.");
+			return sequence;
+		}
+
+	}
+
+	private iNode[] viterbiDecodeNBest(List<Theta<String>> thetas, List<List<Feature<String>>> features, boolean isAverage) {
+
+		if (thetas.size() == 0)
+			throw new UnsupportedOperationException("Zero Length sentence. No need to viterbiDecode.");
+		int size = labelSet.size();
+		double[][] valueGrid = new double[thetas.size()][size * size];
+		double[][] secvalueGrid = new double[thetas.size()][size * size];
+
+		int[][] backtrackGrid = new int[thetas.size()][size * size];
+		int[][] secbacktrackGrid = new int[thetas.size()][size * size];
+		for (int i = 0; i < thetas.size(); i++)
+			for (int j = 0; j < size * size; j++) {
+				valueGrid[i][j] = Double.NaN;
+				secvalueGrid[i][j] = Double.NaN;
+				backtrackGrid[i][j] = Integer.MIN_VALUE;
+				secbacktrackGrid[i][j] = Integer.MIN_VALUE;
+			}
+
+		for (int i = 0; i < thetas.size(); i++) {
+			Theta<String> theta = thetas.get(i);
+			List<Feature<String>> feature = features.get(i);
+			addToNBestGrid(i, thetas.size(), valueGrid, secvalueGrid, backtrackGrid, secbacktrackGrid, theta, feature, isAverage);
+		}
+		addToNBestGrid(thetas.size(), thetas.size(), valueGrid, secvalueGrid, backtrackGrid, secbacktrackGrid, null, null,
+				isAverage);
+//		 printGrids(valueGrid,backtrackGrid);
+//		 printGrids(secvalueGrid,secbacktrackGrid);
+		 
+		return NbestSequence(valueGrid, secvalueGrid, backtrackGrid, secbacktrackGrid);
+
+	}
+
+	private void addToNBestGrid(int i, int size, double[][] vg, double[][] svg, int[][] bg, int[][] sbg, Theta<String> theta,
+			List<Feature<String>> feature, boolean isAvg) {
+		int labelSize = this.labelSet.size();
+		int iStart = labelSize, iEnd = labelSize + 1;
+		// edge cases
+		if (i >= size) {
+			if (size == 1) {
+				for (int p = 0; p < labelSize; p++) {
+					if (Double.isNaN(vg[i - 1][p]))
+						continue;
+					double val = getTransitionValues(iStart, p, iEnd, isAvg) + getTransitionValues(p, iEnd, iEnd, isAvg);
+					vg[i - 1][p] += val;
+					svg[i - 1][p] += val;
+				}
+			} else {
+				for (int c = 0; c < labelSize; c++) {// current
+					double endVal = getTransitionValues(c, iEnd, iEnd, isAvg);
+					for (int p = 0; p < labelSize; p++) {// previous
+						double val = getTransitionValues(p, c, iEnd, isAvg) + endVal;
+						vg[i - 1][p * labelSize + c] += val;
+						svg[i - 1][p * labelSize + c] += val;
+					}
+				}
+			}
+			return;
+		} else if (i == 0) {// elements in layer zero are at the top of list.
+							// previous node index is set to -1.
+			for (String l : this.labelSet) {
+				int c = this.getLabelIndex(l);
+				double emit = getThetaValues(theta, l, isAvg) + getFeatureValues(feature, l, isAvg);
+				double trans = getTransitionValues(labelSize, labelSize, c, isAvg);
+				double sum = emit + trans;
+				vg[0][c] = sum;
+				bg[0][c] = -1;
+				svg[0][c] = sum;
+				sbg[0][c] = -1;
+			}
+			return;
+		}
+
+		// main cases ( 0< i < sentence size)
+		if (i == 1) {
+
+			int pp = labelSize;
+			// just process layer i=1 (#0 is the first layer).
+			for (String l : this.labelSet) { // current
+				double emit = getThetaValues(theta, l, isAvg) + getFeatureValues(feature, l, isAvg);
+				int c = this.getLabelIndex(l);
+				for (int p = 0; p < labelSize; p++) {
+					double trans = getTransitionValues(pp, p, c, isAvg);
+					;
+
+					vg[1][p * labelSize + c] = vg[0][p] + emit + trans;
+					bg[1][p * labelSize + c] = p;
+
+					svg[1][p * labelSize + c] = svg[0][p] + emit + trans;
+					sbg[1][p * labelSize + c] = p;
+				}
+			}
+		} else { // size
+			for (String l : this.labelSet) {
+				double emit = getThetaValues(theta, l, isAvg) + getFeatureValues(feature, l, isAvg);
+				int c = this.getLabelIndex(l);
+				for (int p = 0; p < labelSize; p++) {
+					int ci = p * labelSize + c;
+					double maxSum = Double.NEGATIVE_INFINITY, secSum = Double.NEGATIVE_INFINITY;
+					int maxPi = Integer.MIN_VALUE, secPi = Integer.MIN_VALUE;
+
+					for (int pp = 0; pp < labelSize; pp++) {
+						int pi = pp * labelSize + p;
+						double acc = vg[i - 1][pi];
+						double trans = getTransitionValues(pp, p, c, isAvg);
+						double sum = emit + acc + trans;
+						if (sum >= maxSum){
+							secSum = maxSum; secPi = maxPi;
+							maxSum = sum; maxPi = pi;
+						}else{
+							if (sum >=secSum){
+								secSum = sum;
+								secPi = pi;
+							}
+						}
+
+					}
+					vg[i][ci] = maxSum;
+					bg[i][ci] = maxPi;
+					svg[i][ci] = secSum;
+					sbg[i][ci] = secPi;
+				}
+			}
+		}
+	}
+
+	private iNode[] NbestSequence(double[][] vg, double[][] svg, int[][] bg, int[][] sbg) {
+
+		int wLen = vg.length;
+		String[] label = new String[wLen];
+		String[] seclabel = new String[wLen];
+		int[] labelIndex = new int[wLen];
+		int[] seclabelIndex = new int[wLen];
+		for (int i = 0; i < labelIndex.length; i++) {
+			labelIndex[i] = Integer.MIN_VALUE;
+			seclabelIndex[i] = Integer.MIN_VALUE;
+		}
+		double maxFinalVal = Double.NEGATIVE_INFINITY, secFinalVal = Double.NEGATIVE_INFINITY;
+		int maxNodeId = Integer.MIN_VALUE, secNodeId = Integer.MIN_VALUE;
+
+		for (int i = 0; i < vg[0].length; i++) {
+			if (vg[wLen - 1][i] > maxFinalVal) {
+				maxFinalVal = vg[wLen - 1][i];
+				maxNodeId = i;
+			}
+			if (svg[wLen - 1][i] > secFinalVal) {
+				secFinalVal = vg[wLen - 1][i];
+				secNodeId = i;
+			}
+		}
+		
+		labelIndex[wLen - 1] = maxNodeId;
+		seclabelIndex[wLen - 1] = secNodeId;
+		for (int i = wLen - 1; i > 0; i--) {
+			int bp = bg[i][labelIndex[i]];
+			labelIndex[i - 1] = bp;
+//			System.out.println("i " + i + " secLabelIndex " + seclabelIndex[i]);
+			int sbp = sbg[i][seclabelIndex[i]];
+			seclabelIndex[i - 1] = sbp;
+		}
+		label[0] = this.id2Label.get(labelIndex[0]);
+		seclabel[0] = this.id2Label.get(seclabelIndex[0]);
+		for (int i = 1; i < labelIndex.length; i++) {
+			label[i] = this.id2Label.get(labelIndex[i] % this.labelSet.size());
+			seclabel[i] = this.id2Label.get(seclabelIndex[i] % this.labelSet.size());
+		}
+		double maxprob = Math.exp(maxFinalVal);
+		double secprob = Math.exp(secFinalVal);
+		double sum = maxprob+secprob;
+		iNode[] nodes = new iNode[2];
+		nodes[0] = new iNode(maxFinalVal/sum, label);
+		nodes[1] = new iNode(secFinalVal/sum, seclabel);
+		return nodes;
+	}
+
+	/**
 	 * 
 	 * @param _theta
 	 * @param _features
@@ -512,36 +744,6 @@ public class PerceptronFDMM extends MLModel<String> {
 		return label;
 	}
 
-	private void printLabels(int[] labelIndex) {
-		for (int i = 0; i < labelIndex.length; i++) {
-			print(i + ":" + labelIndex[i] + "\t");
-		}
-		println();
-	}
-
-	private void printGrids(double[][] valueGrid, int[][] bg) {
-		System.out.println(valueGrid.length);
-		System.out.println(valueGrid[0].length);
-		print("Values:	\n");
-
-		for (int i = 0; i < valueGrid.length; i++) {
-			print("word " + i + "\n");
-			for (int j = 0; j < this.labelSet.size(); j++)
-				for (int k = 0; k < this.labelSet.size(); k++)
-					print(j + ":" + k + ":" + valueGrid[i][j * this.labelSet.size() + k] + "\t");
-		}
-		print("\n");
-		// println("BackTracker:");
-		// for (int i = 0; i < valueGrid.length; i++) {
-		// println("word "+ i);
-		// for (int j = 0; j < this.labelSet.size(); j++)
-		// for (int k = 0; k < this.labelSet.size(); k++)
-		// print(j+":"+k+":"+bg[i][j*this.labelSet.size()+k] + "\t");
-		// }
-		println();
-
-	}
-
 	private void addToGrid(int i, int size, double[][] vg, int[][] bg, Theta<String> theta, List<Feature<String>> feature,
 			boolean isAvg) {
 		int labelSize = this.labelSet.size();
@@ -550,7 +752,7 @@ public class PerceptronFDMM extends MLModel<String> {
 		if (i >= size) {
 			if (size == 1) {
 				for (int p = 0; p < labelSize; p++) {
-					if (vg[i - 1][p] == Double.NaN)
+					if (Double.isNaN(vg[i - 1][p]))
 						continue;
 					vg[i - 1][p] += getTransitionValues(iStart, p, iEnd, isAvg) + getTransitionValues(p, iEnd, iEnd, isAvg);
 				}
@@ -667,25 +869,7 @@ public class PerceptronFDMM extends MLModel<String> {
 		return sum;
 	}
 
-	// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	@Override
-	public void store(String file) throws IOException {
-
-	}
-
-	private void print(Object key) {
-		System.out.print(key);
-	}
-
-	private void println() {
-		System.out.println();
-	}
-
-	private void println(String s) {
-		System.out.println(s);
-	}
-
+	// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
 	 * Set labelset, labelindex, and transition matrix as well.
 	 * 
@@ -722,4 +906,54 @@ public class PerceptronFDMM extends MLModel<String> {
 			d[i] = 0.0d;
 		return d;
 	}
+
+	// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public void store(String file) throws IOException {
+
+	}
+
+	private void printLabels(int[] labelIndex) {
+		for (int i = 0; i < labelIndex.length; i++) {
+			print(i + ":" + labelIndex[i] + "\t");
+		}
+		println();
+	}
+
+	private void printGrids(double[][] valueGrid, int[][] bg) {
+		System.out.println(valueGrid.length);
+		System.out.println(valueGrid[0].length);
+		print("Values:	\n");
+
+		for (int i = 0; i < valueGrid.length; i++) {
+			print("\nword " + i + "\n");
+			for (int j = 0; j < this.labelSet.size(); j++)
+				for (int k = 0; k < this.labelSet.size(); k++)
+					print(j + ":" + k + ":" + valueGrid[i][j * this.labelSet.size() + k] + "\t");
+		}
+		print("\n");
+		 println("BackTracker:");
+		 for (int i = 0; i < valueGrid.length; i++) {
+		 println("\nword "+ i);
+		 for (int j = 0; j < this.labelSet.size(); j++)
+		 for (int k = 0; k < this.labelSet.size(); k++)
+		 print(j+":"+k+":"+bg[i][j*this.labelSet.size()+k] + "\t");
+		 }
+		println();
+
+	}
+
+	private void print(Object key) {
+		System.out.print(key);
+	}
+
+	private void println() {
+		System.out.println();
+	}
+
+	private void println(String s) {
+		System.out.println(s);
+	}
+
 }

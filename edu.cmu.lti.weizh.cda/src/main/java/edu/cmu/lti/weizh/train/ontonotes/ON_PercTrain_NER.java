@@ -5,7 +5,8 @@ import edu.cmu.lti.weizh.data.DATA_PATHS;
 import edu.cmu.lti.weizh.data.DataFactory;
 import edu.cmu.lti.weizh.docmodel.DataSet;
 import edu.cmu.lti.weizh.docmodel.Word;
-import edu.cmu.lti.weizh.feature.FCONST;
+import edu.cmu.lti.weizh.feature.Feature;
+import edu.cmu.lti.weizh.feature.Theta;
 import edu.cmu.lti.weizh.train.AbstractPercTrain;
 
 public class ON_PercTrain_NER extends AbstractPercTrain<String, ON_PercTrain_NER, DataSet> {
@@ -15,11 +16,8 @@ public class ON_PercTrain_NER extends AbstractPercTrain<String, ON_PercTrain_NER
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ON_PercTrain_NER(String[] thetaHeaders, String thetaHeaderDelimiter, String thetaValueDelimiter, String[] featureHeaders,
-			String featureHeaderDelimiter, String featureValueDelimiter) {
-		super(thetaHeaders, thetaHeaderDelimiter, thetaValueDelimiter, featureHeaders, featureHeaderDelimiter,
-				featureValueDelimiter);
-
+	public ON_PercTrain_NER(String[] thetaHeaders, String[] featureHeaders) {
+		super(thetaHeaders, featureHeaders);
 	}
 	
 	public ON_PercTrain_NER() {
@@ -27,39 +25,7 @@ public class ON_PercTrain_NER extends AbstractPercTrain<String, ON_PercTrain_NER
 	}
 	
 	public static void main(String argv[]) throws Exception {
-		String thd = "-thd-";
-		String tvd = "-tvd-";
-		String fhd = "-fhd-";
-		String fvd = "-fvd-";
-		
-		String[] thetaHeaders = new String[] { 
-				//basic
-				FCONST.T_WORD, 
-				FCONST.T_LEMMA, 
-				FCONST.T_WORDFORM + thd + FCONST.T_SUFFIX,
-				FCONST.T_PREFIX + thd + FCONST.T_SUFFIX,
-				FCONST.T_POS + thd + FCONST.T_SUFFIX,
-				FCONST.T_POS, 
-				FCONST.T_WORDFORM,
-				FCONST.T_SUFFIX
-				};
 
-		String[] featureHeaders = new String[] { 
-				// basic
-
-				FCONST.p(FCONST.F_POS, 2) + fhd + FCONST.p(FCONST.F_POS, 1), 
-				FCONST.p(FCONST.F_POS, 1) + fhd + FCONST.n(FCONST.F_POS, 1),
-				FCONST.n(FCONST.F_POS, 1) + fhd + FCONST.n(FCONST.F_POS, 2),
-				
-				FCONST.p(FCONST.F_WORDFORM, 2) + fhd + FCONST.p(FCONST.F_WORDFORM, 1), 
-				FCONST.p(FCONST.F_WORDFORM, 1) + fhd + FCONST.n(FCONST.F_WORDFORM, 1),
-				FCONST.n(FCONST.F_WORDFORM, 1) + fhd + FCONST.n(FCONST.F_WORDFORM, 2),
-				
-				FCONST.p(FCONST.F_LEMMA, 1), 
-				FCONST.p(FCONST.F_LEMMA, 2), 
-				FCONST.n(FCONST.F_LEMMA, 1),
-				FCONST.n(FCONST.F_LEMMA, 2),
-		};
 		
 		int iter=100; double th = Double.NEGATIVE_INFINITY;
 //		ON_PercTrain abctrainer = new ON_PercTrain(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
@@ -67,7 +33,7 @@ public class ON_PercTrain_NER extends AbstractPercTrain<String, ON_PercTrain_NER
 //		ON_PercTrain_NER cnntrainer = new ON_PercTrain_NER(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
 //		ON_PercTrain nbctrainer = new ON_PercTrain(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
 //		ON_PercTrain pritrainer = new ON_PercTrain(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
-		ON_PercTrain_NER voatrainer = new ON_PercTrain_NER(thetaHeaders, thd, tvd, featureHeaders, fhd, fvd);
+		ON_PercTrain_NER voatrainer = new ON_PercTrain_NER(Theta.getOnfNerThetaHeaders(),Feature.getOnfNerFeatureHeaders());
 //
 //		abctrainer.train(DataFactory.getONFDataSet(DATA_PATHS.ONF_ABC_TRAIN,true), iter, th);
 //		mnbtrainer.train(DataFactory.getONFDataSet(DATA_PATHS.ONF_MNB_TRAIN,true), iter, th);
