@@ -140,9 +140,35 @@ System total F1: 0.9448296800048576
 	public static void main(String arg[]) {
 		DataSet test2kData = DataFactory.getCONLL2kTest();
 //		CONLLFormatDataSet test2kData = DataFactory.getCONLL2kTrain();
-		C2K_Perc_Train trainer = new C2K_Perc_Train().load("CONLL2kFDMMPerceptron-100.trainer");
+		C2K_Perc_Train trainer = new C2K_Perc_Train().load("trainedModels/CONLL2KTrain_POS_PERC_100_NegInf_basic.trainer");
 		C2K_Perc_Eval evaluator = new C2K_Perc_Eval(trainer);
 		evaluator.evaluate(test2kData);
 	}
+	
+	
+/**	CONLL2k POS
+ * 
+ * 
+ * 
+ * 
+47377.0 47377.0 46174.0
+System total recall: 0.9746079321189607
+System total precision: 0.9746079321189607
+System total F1: 0.9746079321189607
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+
 
 }
